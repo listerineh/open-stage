@@ -4,6 +4,41 @@ Este archivo documenta decisiones técnicas, aprendizajes y soluciones encontrad
 
 ---
 
+## Sistema de Diseño
+
+### Principios
+
+- **Minimalista y elegante** - Sin emojis, espaciado generoso
+- **Iconos consistentes** - Lucide React para todos los iconos
+- **Animaciones sutiles** - Transiciones de 200ms, ease-out
+- **Jerarquía visual clara** - Colores y tipografía bien definidos
+
+### Componentes Base
+
+| Componente      | Uso                               |
+| --------------- | --------------------------------- |
+| `PageContainer` | Wrapper de página con max-width   |
+| `PageHeader`    | Título + descripción + acción     |
+| `BackLink`      | Link de navegación hacia atrás    |
+| `Card`          | Contenedor con borde y fondo      |
+| `IconBadge`     | Icono con fondo circular/cuadrado |
+
+### Colores
+
+- **Fondo:** zinc-950 (primario), zinc-900 (secundario)
+- **Bordes:** zinc-800 (default), zinc-700 (hover)
+- **Texto:** white (primario), zinc-400 (secundario), zinc-500 (muted)
+- **Acento:** violet-500/600 (acciones), violet-400 (texto)
+
+### Tipografía
+
+- **h1:** text-2xl font-semibold tracking-tight
+- **h2:** text-lg font-medium
+- **body:** text-sm
+- **caption:** text-xs text-zinc-500
+
+---
+
 ## Decisiones de Arquitectura
 
 ### Stack Tecnológico (Junio 2026)

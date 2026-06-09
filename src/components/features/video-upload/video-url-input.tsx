@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Link2, ExternalLink, CheckCircle, AlertCircle, Loader2, HelpCircle } from 'lucide-react';
+import { Link2, ExternalLink, ArrowRight, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -15,12 +15,9 @@ export function VideoUrlInput({ onUrlSubmit, disabled = false }: VideoUrlInputPr
   const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const validateGoogleDriveUrl = (inputUrl: string): string | null => {
-    // Formatos válidos de Google Drive:
-    // https://drive.google.com/file/d/FILE_ID/view
-    // https://drive.google.com/open?id=FILE_ID
-    // https://drive.google.com/uc?id=FILE_ID
     const patterns = [
       /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/,
       /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/,
@@ -49,147 +46,139 @@ export function VideoUrlInput({ onUrlSubmit, disabled = false }: VideoUrlInputPr
       const fileId = validateGoogleDriveUrl(url);
 
       if (!fileId) {
-        setError('URL no válida. Asegúrate de usar un enlace de Google Drive.');
+        setError('URL no válida. Usa un enlace de Google Drive.');
         return;
       }
 
       const directUrl = getDirectUrl(fileId);
       onUrlSubmit(directUrl);
     } catch {
-      setError('Error al validar la URL. Intenta de nuevo.');
+      setError('Error al validar la URL.');
     } finally {
       setIsValidating(false);
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && url && !disabled && !isValidating) {
+      handleSubmit();
+    }
+  };
+
   return (
-    <div className="w-full space-y-4">
-      <div className="space-y-2">
-        <label htmlFor="video-url" className="block text-sm font-medium text-zinc-300">
-          URL del video en Google Drive
+    <div className="space-y-6">
+      {/* Input */}
+      <div className="space-y-3">
+        <label htmlFor="video-url" className="block text-sm font-medium text-zinc-400">
+          URL de Google Drive
         </label>
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+        <div className="relative">
+          <div className="relative">
+            <Link2 className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
             <input
               id="video-url"
               type="url"
               value={url}
               onChange={e => setUrl(e.target.value)}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              onKeyDown={handleKeyDown}
               placeholder="https://drive.google.com/file/d/..."
               disabled={disabled || isValidating}
               className={cn(
-                'w-full rounded-md border bg-zinc-900 py-2 pl-10 pr-3 text-white placeholder-zinc-500',
-                'focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500',
-                error ? 'border-red-500' : 'border-zinc-700'
+                'w-full rounded-lg border bg-zinc-900 py-3.5 pl-11 pr-4 text-white placeholder-zinc-600',
+                'transition-all duration-200',
+                'focus:outline-none focus:ring-2 focus:ring-violet-500/20',
+                error ? 'border-red-500/50' : 'border-zinc-800 focus:border-violet-500/50'
+              )}
+            />
+            <div
+              className={cn(
+                'absolute inset-0 -z-10 rounded-lg bg-violet-500/5 blur-xl transition-opacity duration-300',
+                isFocused ? 'opacity-100' : 'opacity-0'
               )}
             />
           </div>
-          <Button onClick={handleSubmit} disabled={!url || disabled || isValidating}>
-            {isValidating ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <CheckCircle className="h-4 w-4" />
-            )}
-          </Button>
+
+          {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
         </div>
+
+        <Button
+          onClick={handleSubmit}
+          disabled={!url || disabled || isValidating}
+          className="w-full h-12 bg-violet-600 hover:bg-violet-500 transition-all duration-200"
+        >
+          {isValidating ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <>
+              Continuar
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </>
+          )}
+        </Button>
       </div>
 
-      {error && (
-        <div className="flex items-center gap-2 text-sm text-red-400">
-          <AlertCircle className="h-4 w-4" />
-          <span>{error}</span>
-        </div>
-      )}
-
+      {/* Tutorial toggle */}
       <button
         type="button"
         onClick={() => setShowTutorial(!showTutorial)}
-        className="flex items-center gap-2 text-sm text-violet-400 hover:text-violet-300"
+        className="flex w-full items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3 text-left transition-colors hover:border-zinc-700"
       >
-        <HelpCircle className="h-4 w-4" />
-        {showTutorial ? 'Ocultar instrucciones' : '¿Cómo subo mi video a Google Drive?'}
+        <span className="text-sm text-zinc-400">¿Cómo subo mi video a Google Drive?</span>
+        {showTutorial ? (
+          <ChevronUp className="h-4 w-4 text-zinc-500" />
+        ) : (
+          <ChevronDown className="h-4 w-4 text-zinc-500" />
+        )}
       </button>
 
-      {showTutorial && <GoogleDriveTutorial />}
-    </div>
-  );
-}
+      {/* Tutorial */}
+      {showTutorial && (
+        <div className="animate-in fade-in slide-in-from-top-2 rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
+          <ol className="space-y-4">
+            {[
+              {
+                text: 'Ve a',
+                link: { href: 'https://drive.google.com', label: 'Google Drive' },
+              },
+              { text: 'Haz clic en "Nuevo" → "Subir archivo"' },
+              { text: 'Clic derecho en el archivo → "Compartir"' },
+              { text: 'Cambia a "Cualquier persona con el enlace"' },
+              { text: 'Copia el enlace y pégalo arriba' },
+            ].map((step, i) => (
+              <li key={i} className="flex gap-4">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-xs font-medium text-zinc-400">
+                  {i + 1}
+                </span>
+                <p className="text-sm text-zinc-400">
+                  {step.text}
+                  {step.link && (
+                    <>
+                      {' '}
+                      <a
+                        href={step.link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-violet-400 transition-colors hover:text-violet-300"
+                      >
+                        {step.link.label}
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    </>
+                  )}
+                </p>
+              </li>
+            ))}
+          </ol>
 
-function GoogleDriveTutorial() {
-  return (
-    <div className="rounded-lg border border-zinc-700 bg-zinc-900 p-4">
-      <h3 className="font-medium text-white">Cómo subir tu video a Google Drive</h3>
-
-      <ol className="mt-4 space-y-4 text-sm text-zinc-300">
-        <li className="flex gap-3">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/20 text-xs font-medium text-violet-400">
-            1
-          </span>
-          <div>
-            <p>
-              Ve a{' '}
-              <a
-                href="https://drive.google.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-violet-400 hover:underline"
-              >
-                Google Drive
-                <ExternalLink className="ml-1 inline h-3 w-3" />
-              </a>
-            </p>
+          <div className="mt-6 flex items-center gap-4 border-t border-zinc-800/50 pt-4 text-xs text-zinc-500">
+            <span>MP4, MOV, WebM, AVI, MKV</span>
+            <span className="h-1 w-1 rounded-full bg-zinc-700" />
+            <span>Sin límite de tamaño</span>
           </div>
-        </li>
-
-        <li className="flex gap-3">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/20 text-xs font-medium text-violet-400">
-            2
-          </span>
-          <div>
-            <p>Haz clic en &quot;Nuevo&quot; → &quot;Subir archivo&quot; y selecciona tu video</p>
-          </div>
-        </li>
-
-        <li className="flex gap-3">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/20 text-xs font-medium text-violet-400">
-            3
-          </span>
-          <div>
-            <p>Una vez subido, haz clic derecho en el archivo → &quot;Compartir&quot;</p>
-          </div>
-        </li>
-
-        <li className="flex gap-3">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/20 text-xs font-medium text-violet-400">
-            4
-          </span>
-          <div>
-            <p>
-              Cambia el acceso a <strong>&quot;Cualquier persona con el enlace&quot;</strong>
-            </p>
-            <p className="mt-1 text-zinc-500">
-              Esto es necesario para que podamos procesar tu video
-            </p>
-          </div>
-        </li>
-
-        <li className="flex gap-3">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-500/20 text-xs font-medium text-violet-400">
-            5
-          </span>
-          <div>
-            <p>Copia el enlace y pégalo arriba</p>
-          </div>
-        </li>
-      </ol>
-
-      <div className="mt-4 rounded-md bg-zinc-800 p-3 text-xs text-zinc-400">
-        <strong className="text-zinc-300">Formatos soportados:</strong> MP4, MOV, WebM, AVI, MKV
-        <br />
-        <strong className="text-zinc-300">Tamaño máximo:</strong> Sin límite (depende de tu Google
-        Drive)
-      </div>
+        </div>
+      )}
     </div>
   );
 }

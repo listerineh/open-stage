@@ -1,16 +1,16 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { LucideIcon, Music, Camera, Play, Tv, Grid, Circle, Check } from 'lucide-react';
 
 export interface OutputFormat {
   id: string;
   name: string;
   platform: string;
   aspectRatio: '9:16' | '16:9' | '1:1' | '4:5';
-  maxDuration: number; // seconds
+  maxDuration: number;
   resolution: { width: number; height: number };
-  icon: string;
-  description: string;
+  icon: LucideIcon;
 }
 
 export const OUTPUT_FORMATS: OutputFormat[] = [
@@ -21,8 +21,7 @@ export const OUTPUT_FORMATS: OutputFormat[] = [
     aspectRatio: '9:16',
     maxDuration: 180,
     resolution: { width: 1080, height: 1920 },
-    icon: '🎵',
-    description: 'Vertical, hasta 3 min',
+    icon: Music,
   },
   {
     id: 'reels',
@@ -31,8 +30,7 @@ export const OUTPUT_FORMATS: OutputFormat[] = [
     aspectRatio: '9:16',
     maxDuration: 90,
     resolution: { width: 1080, height: 1920 },
-    icon: '📸',
-    description: 'Vertical, hasta 90 seg',
+    icon: Camera,
   },
   {
     id: 'shorts',
@@ -41,8 +39,7 @@ export const OUTPUT_FORMATS: OutputFormat[] = [
     aspectRatio: '9:16',
     maxDuration: 60,
     resolution: { width: 1080, height: 1920 },
-    icon: '▶️',
-    description: 'Vertical, hasta 60 seg',
+    icon: Play,
   },
   {
     id: 'youtube',
@@ -51,8 +48,7 @@ export const OUTPUT_FORMATS: OutputFormat[] = [
     aspectRatio: '16:9',
     maxDuration: 600,
     resolution: { width: 1920, height: 1080 },
-    icon: '📺',
-    description: 'Horizontal, hasta 10 min',
+    icon: Tv,
   },
   {
     id: 'instagram-feed',
@@ -61,8 +57,7 @@ export const OUTPUT_FORMATS: OutputFormat[] = [
     aspectRatio: '1:1',
     maxDuration: 60,
     resolution: { width: 1080, height: 1080 },
-    icon: '🖼️',
-    description: 'Cuadrado, hasta 60 seg',
+    icon: Grid,
   },
   {
     id: 'instagram-story',
@@ -71,8 +66,7 @@ export const OUTPUT_FORMATS: OutputFormat[] = [
     aspectRatio: '9:16',
     maxDuration: 15,
     resolution: { width: 1080, height: 1920 },
-    icon: '⭕',
-    description: 'Vertical, hasta 15 seg',
+    icon: Circle,
   },
 ];
 
@@ -150,41 +144,54 @@ interface FormatCardProps {
 }
 
 function FormatCard({ format, isSelected, onClick }: FormatCardProps) {
+  const Icon = format.icon;
+  const durationText =
+    format.maxDuration >= 60
+      ? `${Math.floor(format.maxDuration / 60)} min`
+      : `${format.maxDuration} seg`;
+
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        'flex items-start gap-3 rounded-lg border p-4 text-left transition-all',
+        'group relative flex items-start gap-4 rounded-lg border p-5 text-left transition-all duration-200',
         isSelected
-          ? 'border-violet-500 bg-violet-500/10 ring-1 ring-violet-500'
-          : 'border-zinc-700 bg-zinc-900 hover:border-zinc-600 hover:bg-zinc-800/50'
+          ? 'border-violet-500/50 bg-violet-500/5'
+          : 'border-zinc-800 bg-zinc-900 hover:border-zinc-700 hover:bg-zinc-800/50'
       )}
     >
-      <span className="text-2xl">{format.icon}</span>
-      <div className="flex-1">
+      <div
+        className={cn(
+          'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors',
+          isSelected ? 'bg-violet-500/20 text-violet-400' : 'bg-zinc-800 text-zinc-400'
+        )}
+      >
+        <Icon className="h-5 w-5" />
+      </div>
+
+      <div className="flex-1 min-w-0">
         <p className="font-medium text-white">{format.name}</p>
-        <p className="mt-0.5 text-xs text-zinc-500">{format.description}</p>
-        <div className="mt-2 flex items-center gap-2">
-          <span className="rounded bg-zinc-800 px-1.5 py-0.5 text-xs text-zinc-400">
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <span className="rounded-md bg-zinc-800/80 px-2 py-0.5 text-xs text-zinc-500">
             {format.aspectRatio}
           </span>
-          <span className="rounded bg-zinc-800 px-1.5 py-0.5 text-xs text-zinc-400">
-            {format.resolution.width}x{format.resolution.height}
+          <span className="rounded-md bg-zinc-800/80 px-2 py-0.5 text-xs text-zinc-500">
+            {durationText}
           </span>
         </div>
       </div>
-      {isSelected && (
-        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-violet-500">
-          <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-      )}
+
+      <div
+        className={cn(
+          'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all',
+          isSelected
+            ? 'border-violet-500 bg-violet-500'
+            : 'border-zinc-700 bg-transparent group-hover:border-zinc-600'
+        )}
+      >
+        {isSelected && <Check className="h-3 w-3 text-white" />}
+      </div>
     </button>
   );
 }
