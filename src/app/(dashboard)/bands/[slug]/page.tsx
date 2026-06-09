@@ -61,7 +61,17 @@ export default function BandDetailPage() {
       setCurrentUserId(user.id);
 
       // Fetch band
-      const { data: bandData } = await supabase.from('bands').select('*').eq('slug', slug).single();
+      const { data: bandData, error: bandError } = await supabase
+        .from('bands')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+
+      if (bandError) {
+        console.error('Error fetching band:', bandError);
+        setLoading(false);
+        return;
+      }
 
       if (!bandData) {
         setLoading(false);

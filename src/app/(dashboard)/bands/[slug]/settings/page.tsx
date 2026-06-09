@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Save, Loader2, Trash2, Copy, Check, Plus, AlertTriangle } from 'lucide-react';
+import { LogoUpload } from '@/components/ui/logo-upload';
 import type { Band, BandInvitation } from '@/types/database';
 
 const GENRES = [
@@ -37,11 +38,16 @@ export default function BandSettingsPage() {
   const [creatingInvite, setCreatingInvite] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
 
   // Form state
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [genre, setGenre] = useState('');
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +63,7 @@ export default function BandSettingsPage() {
       setName(bandData.name);
       setDescription(bandData.description || '');
       setGenre(bandData.genre || '');
+      setLogoUrl(bandData.logo_url || null);
 
       // Fetch invitations
       const { data: invitationsData } = await supabase
@@ -78,6 +85,7 @@ export default function BandSettingsPage() {
     if (!band) return;
 
     setSaving(true);
+    setSaveMessage(null);
 
     const { error } = await supabase
       .from('bands')
@@ -85,11 +93,16 @@ export default function BandSettingsPage() {
         name,
         description: description || null,
         genre: genre || null,
+        logo_url: logoUrl,
       })
       .eq('id', band.id);
 
-    if (!error) {
-      setBand({ ...band, name, description, genre });
+    if (error) {
+      setSaveMessage({ type: 'error', text: 'Error al guardar los cambios' });
+    } else {
+      setBand({ ...band, name, description, genre, logo_url: logoUrl });
+      setSaveMessage({ type: 'success', text: 'Cambios guardados correctamente' });
+      setTimeout(() => setSaveMessage(null), 3000);
     }
 
     setSaving(false);
@@ -187,6 +200,16 @@ export default function BandSettingsPage() {
         <form onSubmit={handleSave} className="mt-4 space-y-4">
           <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 space-y-4">
             <div className="space-y-2">
+              <label className="block text-sm font-medium text-zinc-400">Logo de la banda</label>
+              <LogoUpload
+                currentLogoUrl={logoUrl}
+                bandId={band.id}
+                onUpload={url => setLogoUrl(url)}
+                onRemove={() => setLogoUrl(null)}
+              />
+            </div>
+
+            <div className="space-y-2">
               <label htmlFor="name" className="block text-sm font-medium text-zinc-400">
                 Nombre de la banda
               </label>
@@ -233,14 +256,26 @@ export default function BandSettingsPage() {
             </div>
           </div>
 
-          <Button type="submit" disabled={saving} className="bg-violet-600 hover:bg-violet-500">
-            {saving ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Save className="mr-2 h-4 w-4" />
+          <div className="flex items-center gap-4">
+            <Button type="submit" disabled={saving} className="bg-violet-600 hover:bg-violet-500">
+              {saving ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="mr-2 h-4 w-4" />
+              )}
+              Guardar cambios
+            </Button>
+
+            {saveMessage && (
+              <p
+                className={`text-sm ${
+                  saveMessage.type === 'success' ? 'text-emerald-400' : 'text-red-400'
+                }`}
+              >
+                {saveMessage.text}
+              </p>
             )}
-            Guardar cambios
-          </Button>
+          </div>
         </form>
       </section>
 

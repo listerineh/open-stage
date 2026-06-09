@@ -71,12 +71,13 @@ export function useBand() {
   }, [fetchBandData]);
 
   const createBand = useCallback(
-    async (name: string, slug: string, description?: string, genre?: string) => {
+    async (name: string, slug: string, description?: string, genre?: string, logoUrl?: string) => {
       const { data, error } = await supabase.rpc('create_band_with_admin', {
         p_name: name,
         p_slug: slug,
         p_description: description || null,
         p_genre: genre || null,
+        p_logo_url: logoUrl || null,
       });
 
       if (error) throw error;
@@ -114,17 +115,21 @@ export function useBand() {
     [supabase, fetchBandData]
   );
 
-  const generateSlug = useCallback(
-    async (name: string): Promise<string> => {
-      const { data, error } = await supabase.rpc('generate_band_slug', {
-        p_name: name,
-      });
+  const generateSlug = useCallback((name: string): string => {
+    // Generate slug locally
+    const slug = name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Remove accents
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Remove multiple hyphens
+      .replace(/^-|-$/g, ''); // Trim hyphens
 
-      if (error) throw error;
-      return data as string;
-    },
-    [supabase]
-  );
+    // Add random suffix for uniqueness
+    const suffix = Math.random().toString(36).substring(2, 6);
+    return `${slug}-${suffix}`;
+  }, []);
 
   const needsOnboarding = !state.loading && !!state.profile && !state.profile.onboarding_completed;
 

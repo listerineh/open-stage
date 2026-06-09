@@ -6,6 +6,7 @@ import { LogoIcon } from '@/components/ui/logo';
 import { Button } from '@/components/ui/button';
 import { useBand } from '@/hooks/use-band';
 import { Users, Plus, ArrowRight, Loader2, Music, Ticket, AlertCircle } from 'lucide-react';
+import { LogoUpload } from '@/components/ui/logo-upload';
 
 type OnboardingStep = 'choice' | 'create' | 'join';
 
@@ -36,6 +37,7 @@ export default function OnboardingPage() {
   const [bandName, setBandName] = useState('');
   const [bandGenre, setBandGenre] = useState('');
   const [bandDescription, setBandDescription] = useState('');
+  const [bandLogoUrl, setBandLogoUrl] = useState<string | null>(null);
 
   // Join band form
   const [inviteCode, setInviteCode] = useState('');
@@ -46,8 +48,14 @@ export default function OnboardingPage() {
     setLoading(true);
 
     try {
-      const slug = await generateSlug(bandName);
-      await createBand(bandName, slug, bandDescription || undefined, bandGenre || undefined);
+      const slug = generateSlug(bandName);
+      await createBand(
+        bandName,
+        slug,
+        bandDescription || undefined,
+        bandGenre || undefined,
+        bandLogoUrl || undefined
+      );
       router.push('/dashboard');
       router.refresh();
     } catch (err) {
@@ -138,6 +146,18 @@ export default function OnboardingPage() {
             <form onSubmit={handleCreateBand} className="space-y-6">
               <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
                 <div className="space-y-4">
+                  {/* Logo */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-zinc-400">
+                      Logo de la banda
+                    </label>
+                    <LogoUpload
+                      currentLogoUrl={bandLogoUrl}
+                      onUpload={url => setBandLogoUrl(url)}
+                      onRemove={() => setBandLogoUrl(null)}
+                    />
+                  </div>
+
                   {/* Band name */}
                   <div className="space-y-2">
                     <label htmlFor="bandName" className="block text-sm font-medium text-zinc-400">

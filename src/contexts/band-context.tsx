@@ -14,10 +14,16 @@ interface BandContextValue {
   isAdmin: boolean;
   isEditor: boolean;
   hasRole: (role: BandRole | BandRole[]) => boolean;
-  createBand: (name: string, slug: string, description?: string, genre?: string) => Promise<string>;
+  createBand: (
+    name: string,
+    slug: string,
+    description?: string,
+    genre?: string,
+    logoUrl?: string
+  ) => Promise<string>;
   joinBandWithCode: (code: string) => Promise<string>;
   switchBand: (bandId: string) => Promise<void>;
-  generateSlug: (name: string) => Promise<string>;
+  generateSlug: (name: string) => string;
   refresh: () => Promise<void>;
 }
 
