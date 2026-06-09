@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, startTransition } from 'react';
 import { VideoUrlInput } from '@/components/features/video-upload';
 import {
   FormatSelector,
@@ -58,44 +58,47 @@ const STEPS: { id: Step; label: string; icon: React.ElementType }[] = [
   { id: 'subtitles', label: 'Subtítulos', icon: Type },
 ];
 
-function usePersistedState<T>(
-  key: string,
-  defaultValue: T
-): [T, React.Dispatch<React.SetStateAction<T>>] {
-  const [state, setState] = useState<T>(() => {
-    if (typeof window === 'undefined') return defaultValue;
-    try {
-      const saved = localStorage.getItem(key);
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-    return defaultValue;
-  });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(key, JSON.stringify(state));
-    } catch {
-      // ignore
-    }
-  }, [key, state]);
-
-  return [state, setState];
-}
+const DEFAULT_WIZARD_STATE: WizardState = {
+  currentStep: 'video',
+  videoUrl: null,
+  videoInfo: null,
+  selectedFormats: [],
+  selectedIntent: 'viral',
+  subtitleSettings: DEFAULT_SUBTITLE_SETTINGS,
+};
 
 export default function CreatePage() {
-  const [wizardState, setWizardState] = usePersistedState<WizardState>(STORAGE_KEY, {
-    currentStep: 'video',
-    videoUrl: null,
-    videoInfo: null,
-    selectedFormats: [],
-    selectedIntent: 'viral',
-    subtitleSettings: DEFAULT_SUBTITLE_SETTINGS,
-  });
-
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [wizardState, setWizardState] = useState<WizardState>(DEFAULT_WIZARD_STATE);
   const [isVerifying, setIsVerifying] = useState(false);
   const [verifyError, setVerifyError] = useState<string | null>(null);
+
+  // Load from localStorage after hydration
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        startTransition(() => {
+          setWizardState(JSON.parse(saved));
+        });
+      }
+    } catch {
+      // ignore
+    }
+    startTransition(() => {
+      setIsHydrated(true);
+    });
+  }, []);
+
+  // Save to localStorage on change (only after hydration)
+  useEffect(() => {
+    if (!isHydrated) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(wizardState));
+    } catch {
+      // ignore
+    }
+  }, [isHydrated, wizardState]);
 
   const { currentStep, videoUrl, videoInfo, selectedFormats, selectedIntent, subtitleSettings } =
     wizardState;
@@ -188,7 +191,8 @@ export default function CreatePage() {
     return false;
   };
 
-  const hasProgress = videoUrl || selectedFormats.length > 0 || currentStep !== 'video';
+  const hasProgress =
+    isHydrated && (videoUrl || selectedFormats.length > 0 || currentStep !== 'video');
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-10 md:px-8 lg:px-12">
