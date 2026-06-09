@@ -21,12 +21,12 @@ OpenStage es una plataforma all-in-one diseñada para bandas y músicos que quie
 
 ## ✨ Características Principales
 
-- 🎬 **Generación inteligente de clips** - Detecta momentos clave, canciones completas, highlights
-- 📝 **Subtítulos automáticos** - Transcripción con Whisper, estilos personalizables
-- 📊 **Dashboard unificado** - Métricas de Spotify, YouTube, TikTok, Instagram en un solo lugar
-- 👥 **Gestión de bandas** - Invita miembros, asigna roles, colabora
-- 📁 **Almacén de contenido** - Organiza tus clips en carpetas, historial completo
-- 🚀 **Publicación directa** - Sube a redes sociales sin salir de la plataforma
+- 🎬 **Generación de clips en el navegador** - Procesamiento con FFmpeg WASM, sin servidores externos
+- � **Soporte Google Drive** - Descarga videos directamente desde enlaces públicos de Drive
+- 🎯 **Múltiples formatos** - TikTok (9:16), Instagram Reels, YouTube Shorts, Posts (1:1), YouTube (16:9)
+- ⚡ **Procesamiento rápido** - Clips de 30 segundos generados en minutos
+- � **Descarga directa** - Clips listos para publicar, descarga individual o masiva
+- 🎨 **Wizard intuitivo** - Flujo paso a paso para configurar formato, intención y subtítulos
 
 ## 🚀 Inicio Rápido
 
@@ -56,35 +56,39 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
 ## 📁 Estructura del Proyecto
 
-```
+```text
 src/
 ├── app/                    # Next.js App Router
 │   ├── (auth)/            # Rutas de autenticación
-│   ├── (dashboard)/       # Rutas protegidas
-│   └── api/               # API Routes
+│   ├── (dashboard)/       # Rutas protegidas (create, processing, results)
+│   └── api/               # API Routes (download-video, verify-video)
 ├── components/
 │   ├── ui/                # Componentes shadcn/ui
 │   └── features/          # Componentes por feature
 ├── lib/
 │   ├── supabase/          # Cliente y tipos de Supabase
-│   ├── video/             # Procesamiento de video
-│   └── ai/                # Integraciones de IA
-├── hooks/                 # Custom React hooks
+│   ├── video/             # Procesamiento FFmpeg WASM
+│   └── constants/         # Formatos, intents, estilos
 ├── stores/                # Zustand stores
 └── types/                 # TypeScript types
+public/
+└── ffmpeg/                # FFmpeg WASM core files
 ```
 
 ## 🛠️ Scripts Disponibles
 
-| Comando             | Descripción                   |
-| ------------------- | ----------------------------- |
-| `pnpm dev`          | Inicia servidor de desarrollo |
-| `pnpm build`        | Construye para producción     |
-| `pnpm start`        | Inicia servidor de producción |
-| `pnpm lint`         | Ejecuta ESLint                |
-| `pnpm lint:fix`     | Corrige errores de ESLint     |
-| `pnpm format`       | Formatea código con Prettier  |
-| `pnpm format:check` | Verifica formato              |
+| Comando             | Descripción                      |
+| ------------------- | -------------------------------- |
+| `pnpm dev`          | Inicia servidor de desarrollo    |
+| `pnpm build`        | Construye para producción        |
+| `pnpm start`        | Inicia servidor de producción    |
+| `pnpm lint`         | Ejecuta ESLint                   |
+| `pnpm lint:fix`     | Corrige errores de ESLint        |
+| `pnpm format`       | Formatea código con Prettier     |
+| `pnpm format:check` | Verifica formato                 |
+| `pnpm db:migrate`   | Aplica migraciones a Supabase    |
+| `pnpm db:reset`     | Resetea la base de datos         |
+| `pnpm db:types`     | Genera tipos TypeScript de la DB |
 
 ## 🤝 Contribuir
 
@@ -117,7 +121,7 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 - [Next.js](https://nextjs.org/) - Framework React
 - [Supabase](https://supabase.com/) - Backend as a Service
 - [shadcn/ui](https://ui.shadcn.com/) - Componentes UI
-- [Whisper](https://github.com/openai/whisper) - Transcripción de audio
+- [FFmpeg WASM](https://ffmpegwasm.netlify.app/) - Procesamiento de video en el navegador
 
 ---
 
