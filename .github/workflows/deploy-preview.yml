@@ -1,8 +1,12 @@
 name: Deploy Preview
 
 on:
-  pull_request:
-    branches: [develop, main]
+  workflow_dispatch:
+  # pull_request:
+  #   branches: [develop, main]
+
+# TODO: Descomentar pull_request trigger cuando VERCEL_TOKEN esté configurado
+# en GitHub Secrets (Settings → Secrets → Actions → New repository secret)
 
 jobs:
   deploy-preview:

@@ -1,10 +1,14 @@
 name: Deploy Production
 
 on:
-  push:
-    branches: [main]
-    tags:
-      - 'v*'
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+  #   tags:
+  #     - 'v*'
+
+# TODO: Descomentar push trigger cuando VERCEL_TOKEN esté configurado
+# en GitHub Secrets (Settings → Secrets → Actions → New repository secret)
 
 jobs:
   deploy-production:
