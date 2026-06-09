@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import JSZip from 'jszip';
 import {
   ArrowLeft,
   Clock,
@@ -78,9 +79,34 @@ export function ResultsView() {
     if (clips.length === 0) return;
     setIsDownloadingAll(true);
 
-    for (const clip of clips) {
-      handleDownloadClip(clip);
-      await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      const zip = new JSZip();
+
+      // Fetch all blobs and add to zip
+      for (const clip of clips) {
+        const response = await fetch(clip.url);
+        const blob = await response.blob();
+        const fileName = `${clip.format.name} - ${clip.name.replace(/[^a-zA-Z0-9-_]/g, '_')}.mp4`;
+        zip.file(fileName, blob);
+      }
+
+      // Generate and download zip
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const zipUrl = URL.createObjectURL(zipBlob);
+
+      const a = document.createElement('a');
+      a.href = zipUrl;
+      a.download = `openstage-clips-${Date.now()}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(zipUrl);
+
+      // Mark all as downloaded
+      setDownloadedClips(new Set(clips.map(c => c.id)));
+    } catch (error) {
+      console.error('Error creating ZIP:', error);
     }
 
     setIsDownloadingAll(false);

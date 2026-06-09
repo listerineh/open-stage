@@ -34,10 +34,6 @@ export function VideoUrlInput({ onUrlSubmit, disabled = false }: VideoUrlInputPr
     return null;
   };
 
-  const getDirectUrl = (fileId: string): string => {
-    return `https://drive.google.com/uc?export=download&id=${fileId}`;
-  };
-
   const handleSubmit = async () => {
     setError(null);
     setIsValidating(true);
@@ -50,8 +46,9 @@ export function VideoUrlInput({ onUrlSubmit, disabled = false }: VideoUrlInputPr
         return;
       }
 
-      const directUrl = getDirectUrl(fileId);
-      onUrlSubmit(directUrl);
+      // Send the original URL format that's easier to parse
+      const normalizedUrl = `https://drive.google.com/file/d/${fileId}/view`;
+      onUrlSubmit(normalizedUrl);
     } catch {
       setError('Error al validar la URL.');
     } finally {

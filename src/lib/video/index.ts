@@ -1,34 +1,12 @@
 export {
   loadFFmpeg,
-  extractAudio,
+  downloadVideo,
   generateClip,
-  generateMultipleClips,
-  addSubtitlesToClip,
-  isFFmpegLoaded,
-  unloadFFmpeg,
-  type ClipConfig,
+  processVideo,
   type ProcessingProgress,
-} from './ffmpeg-service';
-
-export {
-  detectMoments,
-  quickDetect,
-  type AudioMoment,
-  type DetectionConfig,
-  type DetectionResult,
-  type ClipSuggestion,
-} from './moment-detection';
-
-export {
-  generateClips,
-  downloadClip,
-  downloadAllClips,
-  revokeClipUrls,
-  estimateProcessingTime,
-  type GenerationConfig,
+  type ProcessingConfig,
   type GeneratedClip,
-  type GenerationProgress,
-} from './clip-generator';
+} from './video-processor-client';
 
 // Re-export constants for convenience
 export {

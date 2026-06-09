@@ -69,17 +69,17 @@ export default function Home() {
               {
                 icon: Film,
                 title: 'Múltiples formatos',
-                description: 'TikTok, Reels, Shorts y más',
+                description: 'TikTok, Reels, Shorts, Instagram y YouTube',
               },
               {
                 icon: Sparkles,
-                title: 'Subtítulos con IA',
-                description: 'Transcripción automática con Whisper',
+                title: 'Procesamiento en navegador',
+                description: 'FFmpeg WASM - sin servidores externos',
               },
               {
                 icon: Zap,
-                title: 'Detección inteligente',
-                description: 'Encuentra los mejores momentos',
+                title: 'Descarga directa',
+                description: 'Clips listos para publicar al instante',
               },
             ].map(feature => (
               <div
