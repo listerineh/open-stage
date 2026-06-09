@@ -98,7 +98,9 @@ export default function Home() {
 
         {/* Footer */}
         <footer className="mt-auto pt-12 text-center">
-          <p className="text-sm text-zinc-600">© 2024 OpenStage. Hecho para músicos.</p>
+          <p className="text-sm text-zinc-600">
+            © {new Date().getFullYear()} OpenStage. Hecho para músicos.
+          </p>
         </footer>
       </div>
     </div>

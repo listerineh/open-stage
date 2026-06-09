@@ -8,7 +8,6 @@ import {
   SubtitleConfig,
   type SubtitleSettings,
 } from '@/components/features/clip-settings';
-import { PageContainer } from '@/components/ui/page-container';
 import { Button } from '@/components/ui/button';
 import {
   ArrowRight,
@@ -130,7 +129,7 @@ export default function CreatePage() {
   };
 
   return (
-    <PageContainer size="md">
+    <div className="mx-auto max-w-3xl px-6 py-10 md:px-8 lg:px-12">
       <div className="space-y-8">
         {/* Header */}
         <div>
@@ -317,6 +316,6 @@ export default function CreatePage() {
           </Button>
         </div>
       </div>
-    </PageContainer>
+    </div>
   );
 }
