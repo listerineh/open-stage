@@ -2,6 +2,15 @@
 
 Este archivo documenta decisiones técnicas, aprendizajes y soluciones encontradas durante el desarrollo.
 
+## URLs del Proyecto
+
+| Entorno    | URL                                                                                          |
+| ---------- | -------------------------------------------------------------------------------------------- |
+| Producción | [openstage.online](https://openstage.online)                                                 |
+| Staging    | [open-stage-dev.vercel.app](https://open-stage-dev.vercel.app)                               |
+| Local      | [localhost:3000](http://localhost:3000)                                                      |
+| GitHub     | [github.com/listerineh/ia-content-creator](https://github.com/listerineh/ia-content-creator) |
+
 ---
 
 ## Sistema de Diseño
