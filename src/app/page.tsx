@@ -152,7 +152,7 @@ export default function Home() {
                 <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
                 <div className="h-3 w-3 rounded-full bg-green-500/80" />
                 <span className="ml-4 text-xs text-zinc-500">
-                  openstage.app/tools/clip-generator
+                  openstage.online/tools/clip-generator
                 </span>
               </div>
               <div className="relative aspect-video bg-zinc-900 p-8">
