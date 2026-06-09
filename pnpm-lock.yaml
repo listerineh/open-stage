@@ -17,6 +17,12 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.108.0
         version: 2.108.0
+      '@transcribe/shout':
+        specifier: ^1.0.7
+        version: 1.0.7
+      '@transcribe/transcriber':
+        specifier: ^3.0.1
+        version: 3.0.1(@transcribe/shout@1.0.7)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -778,6 +784,14 @@ packages:
 
   '@tailwindcss/postcss@4.3.0':
     resolution: {integrity: sha512-Jm05Tjx+9yCLGv5qw1c+84Psds8MnyrEQYCB+FFk2lgGiUjlRqdxke4mVTuYrj2xnVZqKim2Apr5ySuQRYAw/w==}
+
+  '@transcribe/shout@1.0.7':
+    resolution: {integrity: sha512-1QCe9oJYimE2bh4kzZZjHr3645ICvEPF31XPOXnH2WUU41FmG7a6RHAvpuaPAGDhUf5ASdzLP/hwMLsquffnWw==}
+
+  '@transcribe/transcriber@3.0.1':
+    resolution: {integrity: sha512-zppcSobOufAia0CAtNSi+dOyECATPeXBju8NEU7qgCKJS++A/BfHX0ch1qhSq+xVUUrF8bJxarK93aPC9L4HNg==}
+    peerDependencies:
+      '@transcribe/shout': ~1.0.7
 
   '@ts-morph/common@0.27.0':
     resolution: {integrity: sha512-Wf29UqxWDpc+i61k3oIOzcUfQt79PIT9y/MWfAGlrkjg6lBC1hwDECLXPVJAhWjiGbfBCxZd65F/LIZF3+jeJQ==}
@@ -3708,6 +3722,12 @@ snapshots:
       '@tailwindcss/oxide': 4.3.0
       postcss: 8.5.15
       tailwindcss: 4.3.0
+
+  '@transcribe/shout@1.0.7': {}
+
+  '@transcribe/transcriber@3.0.1(@transcribe/shout@1.0.7)':
+    dependencies:
+      '@transcribe/shout': 1.0.7
 
   '@ts-morph/common@0.27.0':
     dependencies:
