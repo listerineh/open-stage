@@ -25,11 +25,11 @@ export default async function DashboardPage() {
             <h1 className="mt-1 text-2xl font-semibold tracking-tight text-white">{firstName}</h1>
           </div>
           <Link
-            href="/upload"
+            href="/create"
             className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-violet-500"
           >
             <Plus className="h-4 w-4" />
-            Nuevo video
+            Crear clips
           </Link>
         </div>
 
@@ -68,10 +68,10 @@ export default async function DashboardPage() {
             Agrega tu primer video para empezar a generar clips
           </p>
           <Link
-            href="/upload"
+            href="/create"
             className="mt-6 inline-flex items-center gap-2 text-sm text-violet-400 transition-colors hover:text-violet-300"
           >
-            Agregar video
+            Crear clips
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

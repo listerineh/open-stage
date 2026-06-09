@@ -138,29 +138,31 @@ export default function UploadPage() {
 
               {/* Video Info */}
               {status === 'success' && videoInfo && (
-                <div className="mt-6 grid grid-cols-2 gap-4 border-t border-zinc-800/50 pt-6">
+                <div className="mt-6 flex items-center gap-6 border-t border-zinc-800/50 pt-6">
                   <div className="flex items-center gap-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-800">
                       <Film className="h-4 w-4 text-zinc-400" />
                     </div>
                     <div>
-                      <p className="text-xs text-zinc-500">Tipo</p>
+                      <p className="text-xs text-zinc-500">Formato</p>
                       <p className="text-sm text-white">
                         {videoInfo.contentType?.split('/')[1]?.toUpperCase() || 'Video'}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-800">
-                      <HardDrive className="h-4 w-4 text-zinc-400" />
+                  {videoInfo.contentLength && (
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-800">
+                        <HardDrive className="h-4 w-4 text-zinc-400" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-zinc-500">Tamaño</p>
+                        <p className="text-sm text-white">
+                          {formatFileSize(videoInfo.contentLength)}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs text-zinc-500">Tamaño</p>
-                      <p className="text-sm text-white">
-                        {formatFileSize(videoInfo.contentLength)}
-                      </p>
-                    </div>
-                  </div>
+                  )}
                 </div>
               )}
 
