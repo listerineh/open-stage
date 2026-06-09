@@ -2,45 +2,14 @@
 
 import { cn } from '@/lib/utils';
 import { LucideIcon, Zap, Music, Star, Laugh, Check } from 'lucide-react';
+import { VIDEO_INTENTS, type VideoIntent } from '@/lib/constants';
 
-export interface VideoIntent {
-  id: string;
-  name: string;
-  description: string;
-  icon: LucideIcon;
-  examples: string[];
-}
-
-export const VIDEO_INTENTS: VideoIntent[] = [
-  {
-    id: 'viral',
-    name: 'Clips virales',
-    description: 'Momentos de alta energía y engagement',
-    icon: Zap,
-    examples: ['Solos épicos', 'Drops', 'Reacciones del público'],
-  },
-  {
-    id: 'songs',
-    name: 'Canciones completas',
-    description: 'Cada canción como un clip separado',
-    icon: Music,
-    examples: ['Covers', 'Canciones originales', 'Setlist completo'],
-  },
-  {
-    id: 'highlights',
-    name: 'Mejores momentos',
-    description: 'Los puntos más destacados del video',
-    icon: Star,
-    examples: ['Momentos clave', 'Aplausos', 'Interacción con fans'],
-  },
-  {
-    id: 'funny',
-    name: 'Momentos divertidos',
-    description: 'Risas, fails y reacciones espontáneas',
-    icon: Laugh,
-    examples: ['Bloopers', 'Chistes', 'Momentos inesperados'],
-  },
-];
+const ICON_MAP: Record<VideoIntent['iconName'], LucideIcon> = {
+  Zap,
+  Music,
+  Star,
+  Laugh,
+};
 
 interface IntentSelectorProps {
   selectedIntent: string | null;
@@ -69,7 +38,7 @@ interface IntentCardProps {
 }
 
 function IntentCard({ intent, isSelected, onClick }: IntentCardProps) {
-  const Icon = intent.icon;
+  const Icon = ICON_MAP[intent.iconName];
 
   return (
     <button

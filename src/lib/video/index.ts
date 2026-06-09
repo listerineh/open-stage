@@ -25,10 +25,24 @@ export {
   downloadAllClips,
   revokeClipUrls,
   estimateProcessingTime,
-  VIDEO_FORMATS,
-  type VideoFormat,
-  type SubtitleStyle,
   type GenerationConfig,
   type GeneratedClip,
   type GenerationProgress,
 } from './clip-generator';
+
+// Re-export constants for convenience
+export {
+  OUTPUT_FORMATS,
+  OUTPUT_FORMATS_MAP,
+  VIDEO_INTENTS,
+  SUBTITLE_STYLES,
+  LANGUAGES,
+  DEFAULT_SUBTITLE_SETTINGS,
+  type OutputFormat,
+  type VideoIntent,
+  type VideoIntentId,
+  type SubtitleStyle,
+  type SubtitleSettings,
+  type SubtitleStyleId,
+  type Language,
+} from '../constants';

@@ -2,73 +2,16 @@
 
 import { cn } from '@/lib/utils';
 import { LucideIcon, Music, Camera, Play, Tv, Grid, Circle, Check } from 'lucide-react';
+import { OUTPUT_FORMATS, type OutputFormat } from '@/lib/constants';
 
-export interface OutputFormat {
-  id: string;
-  name: string;
-  platform: string;
-  aspectRatio: '9:16' | '16:9' | '1:1' | '4:5';
-  maxDuration: number;
-  resolution: { width: number; height: number };
-  icon: LucideIcon;
-}
-
-export const OUTPUT_FORMATS: OutputFormat[] = [
-  {
-    id: 'tiktok',
-    name: 'TikTok',
-    platform: 'TikTok',
-    aspectRatio: '9:16',
-    maxDuration: 180,
-    resolution: { width: 1080, height: 1920 },
-    icon: Music,
-  },
-  {
-    id: 'reels',
-    name: 'Instagram Reels',
-    platform: 'Instagram',
-    aspectRatio: '9:16',
-    maxDuration: 90,
-    resolution: { width: 1080, height: 1920 },
-    icon: Camera,
-  },
-  {
-    id: 'shorts',
-    name: 'YouTube Shorts',
-    platform: 'YouTube',
-    aspectRatio: '9:16',
-    maxDuration: 60,
-    resolution: { width: 1080, height: 1920 },
-    icon: Play,
-  },
-  {
-    id: 'youtube',
-    name: 'YouTube',
-    platform: 'YouTube',
-    aspectRatio: '16:9',
-    maxDuration: 600,
-    resolution: { width: 1920, height: 1080 },
-    icon: Tv,
-  },
-  {
-    id: 'instagram-feed',
-    name: 'Instagram Feed',
-    platform: 'Instagram',
-    aspectRatio: '1:1',
-    maxDuration: 60,
-    resolution: { width: 1080, height: 1080 },
-    icon: Grid,
-  },
-  {
-    id: 'instagram-story',
-    name: 'Instagram Story',
-    platform: 'Instagram',
-    aspectRatio: '9:16',
-    maxDuration: 15,
-    resolution: { width: 1080, height: 1920 },
-    icon: Circle,
-  },
-];
+const ICON_MAP: Record<OutputFormat['iconName'], LucideIcon> = {
+  Music,
+  Camera,
+  Play,
+  Tv,
+  Grid,
+  Circle,
+};
 
 interface FormatSelectorProps {
   selectedFormats: string[];
@@ -144,7 +87,7 @@ interface FormatCardProps {
 }
 
 function FormatCard({ format, isSelected, onClick }: FormatCardProps) {
-  const Icon = format.icon;
+  const Icon = ICON_MAP[format.iconName];
   const durationText =
     format.maxDuration >= 60
       ? `${Math.floor(format.maxDuration / 60)} min`

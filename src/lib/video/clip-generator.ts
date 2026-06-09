@@ -6,42 +6,13 @@
 import { loadFFmpeg, extractAudio, generateClip, addSubtitlesToClip } from './ffmpeg-service';
 import { detectMoments, type DetectionConfig } from './moment-detection';
 import { initTranscriber, transcribeAudio, destroyTranscriber } from '../transcription';
-
-export interface VideoFormat {
-  id: string;
-  name: string;
-  width: number;
-  height: number;
-  aspectRatio: string;
-}
-
-export const VIDEO_FORMATS: Record<string, VideoFormat> = {
-  tiktok: { id: 'tiktok', name: 'TikTok', width: 1080, height: 1920, aspectRatio: '9:16' },
-  reels: { id: 'reels', name: 'Instagram Reels', width: 1080, height: 1920, aspectRatio: '9:16' },
-  shorts: { id: 'shorts', name: 'YouTube Shorts', width: 1080, height: 1920, aspectRatio: '9:16' },
-  instagram: {
-    id: 'instagram',
-    name: 'Instagram Post',
-    width: 1080,
-    height: 1080,
-    aspectRatio: '1:1',
-  },
-  youtube: { id: 'youtube', name: 'YouTube', width: 1920, height: 1080, aspectRatio: '16:9' },
-};
-
-export interface SubtitleStyle {
-  enabled: boolean;
-  style: 'minimal' | 'bold' | 'outline' | 'shadow';
-  position: 'top' | 'center' | 'bottom';
-  alignment: 'left' | 'center' | 'right';
-  language: string;
-}
+import { OUTPUT_FORMATS_MAP, type OutputFormat, type SubtitleSettings } from '../constants';
 
 export interface GenerationConfig {
   videoUrl: string;
   formats: string[];
   intent: 'viral' | 'songs' | 'highlights' | 'funny';
-  subtitles: SubtitleStyle;
+  subtitles: SubtitleSettings;
   minClipDuration?: number;
   maxClipDuration?: number;
   targetClipCount?: number;
@@ -50,7 +21,7 @@ export interface GenerationConfig {
 export interface GeneratedClip {
   id: string;
   name: string;
-  format: VideoFormat;
+  format: OutputFormat;
   startTime: number;
   endTime: number;
   duration: number;
@@ -166,7 +137,7 @@ export async function generateClips(
 
     for (const suggestion of suggestions) {
       for (const formatId of config.formats) {
-        const format = VIDEO_FORMATS[formatId];
+        const format = OUTPUT_FORMATS_MAP[formatId];
         if (!format) continue;
 
         currentClip++;
@@ -187,7 +158,12 @@ export async function generateClips(
         let clipBlob = await generateClip(config.videoUrl, {
           startTime: suggestion.start,
           endTime: suggestion.end,
-          format,
+          format: {
+            id: format.id,
+            width: format.resolution.width,
+            height: format.resolution.height,
+            aspectRatio: format.aspectRatio,
+          },
           outputName: clipId,
         });
 

@@ -12,48 +12,7 @@ import {
   Check,
   Globe,
 } from 'lucide-react';
-
-export interface SubtitleSettings {
-  enabled: boolean;
-  style: 'minimal' | 'bold' | 'karaoke' | 'outline';
-  position: 'top' | 'center' | 'bottom';
-  alignment: 'left' | 'center' | 'right';
-  language: string;
-}
-
-const SUBTITLE_STYLES = [
-  {
-    id: 'minimal',
-    name: 'Minimal',
-    description: 'Texto limpio y simple',
-    preview: 'font-normal text-white',
-  },
-  {
-    id: 'bold',
-    name: 'Bold',
-    description: 'Texto grande y llamativo',
-    preview: 'font-bold text-white text-lg',
-  },
-  {
-    id: 'karaoke',
-    name: 'Karaoke',
-    description: 'Resaltado palabra por palabra',
-    preview: 'font-semibold text-yellow-400',
-  },
-  {
-    id: 'outline',
-    name: 'Outline',
-    description: 'Con borde para mejor lectura',
-    preview: 'font-semibold text-white [text-shadow:_2px_2px_0_#000]',
-  },
-] as const;
-
-const LANGUAGES = [
-  { code: 'es', name: 'Español' },
-  { code: 'en', name: 'English' },
-  { code: 'pt', name: 'Português' },
-  { code: 'auto', name: 'Detectar automáticamente' },
-];
+import { SUBTITLE_STYLES, LANGUAGES, type SubtitleSettings } from '@/lib/constants';
 
 interface SubtitleConfigProps {
   settings: SubtitleSettings;
