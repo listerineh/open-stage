@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { Providers } from '@/components/providers';
 import { OrganizationJsonLd, WebsiteJsonLd } from '@/components/seo';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
 const inter = Inter({
@@ -107,6 +108,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-zinc-950 font-sans">
         <Providers>{children}</Providers>
       </body>
+      <Analytics />
     </html>
   );
 }
