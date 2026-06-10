@@ -130,13 +130,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Stream the video response
-    const videoData = await response.arrayBuffer();
+    // Stream the video response directly without buffering
+    const contentLength = response.headers.get('content-length');
 
-    return new NextResponse(videoData, {
+    return new NextResponse(response.body, {
       headers: {
         'Content-Type': contentType || 'video/mp4',
-        'Content-Length': videoData.byteLength.toString(),
+        ...(contentLength && { 'Content-Length': contentLength }),
         'Cache-Control': 'public, max-age=3600',
       },
     });
