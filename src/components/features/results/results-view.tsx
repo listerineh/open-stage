@@ -19,6 +19,9 @@ import {
   Play,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useBandContext } from '@/contexts/band-context';
+import Image from 'next/image';
+import { Music } from 'lucide-react';
 
 interface StoredClip {
   id: string;
@@ -46,6 +49,7 @@ const FORMAT_ICONS: Record<string, { icon: string; color: string; bg: string }> 
 
 export function ResultsView() {
   const router = useRouter();
+  const { currentBand } = useBandContext();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [clips] = useState<StoredClip[]>(() => {
     if (typeof window === 'undefined') return [];
@@ -180,6 +184,22 @@ export function ResultsView() {
             <CheckCircle2 className="h-4 w-4 text-green-400" />
             {clips.length} clip{clips.length !== 1 ? 's' : ''} listo
             {clips.length !== 1 ? 's' : ''} para descargar
+            {currentBand && (
+              <span className="ml-2 inline-flex items-center gap-1 rounded bg-zinc-800 px-1.5 py-0.5 text-xs font-medium text-white">
+                {currentBand.logo_url ? (
+                  <Image
+                    src={currentBand.logo_url}
+                    alt={currentBand.name}
+                    width={12}
+                    height={12}
+                    className="rounded"
+                  />
+                ) : (
+                  <Music className="h-3 w-3 text-violet-400" />
+                )}
+                {currentBand.name}
+              </span>
+            )}
           </p>
         </div>
 

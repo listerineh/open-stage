@@ -25,6 +25,9 @@ import {
   Video,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useBandContext } from '@/contexts/band-context';
+import Image from 'next/image';
+import { Music } from 'lucide-react';
 
 type Step = 'video' | 'formats' | 'intent' | 'subtitles';
 
@@ -72,6 +75,7 @@ const DEFAULT_WIZARD_STATE: WizardState = {
 
 export default function ClipGeneratorPage() {
   const router = useRouter();
+  const { currentBand } = useBandContext();
   const [isHydrated, setIsHydrated] = useState(false);
   const [wizardState, setWizardState] = useState<WizardState>(DEFAULT_WIZARD_STATE);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -211,7 +215,29 @@ export default function ClipGeneratorPage() {
                 <h1 className="text-2xl font-semibold tracking-tight text-white">
                   Generador de Clips
                 </h1>
-                <p className="text-sm text-zinc-500">Crea clips virales desde tus videos</p>
+                <p className="text-sm text-zinc-500">
+                  {currentBand ? (
+                    <span className="flex items-center gap-1.5">
+                      Creando para{' '}
+                      <span className="inline-flex items-center gap-1 rounded bg-zinc-800 px-1.5 py-0.5 font-medium text-white">
+                        {currentBand.logo_url ? (
+                          <Image
+                            src={currentBand.logo_url}
+                            alt={currentBand.name}
+                            width={14}
+                            height={14}
+                            className="rounded"
+                          />
+                        ) : (
+                          <Music className="h-3 w-3 text-violet-400" />
+                        )}
+                        {currentBand.name}
+                      </span>
+                    </span>
+                  ) : (
+                    'Crea clips virales desde tus videos'
+                  )}
+                </p>
               </div>
             </div>
           </div>
