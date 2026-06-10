@@ -86,17 +86,22 @@ export default function BandDetailPage() {
         p_band_id: bandData.id,
       });
 
-      // Fetch profiles for each member
+      // Fetch profiles for each member using service role via API
       if (membersData && membersData.length > 0) {
         const userIds = membersData.map((m: BandMember) => m.user_id);
-        const { data: profilesData } = await supabase
-          .from('profiles')
-          .select('id, full_name, email, avatar_url')
-          .in('id', userIds);
+
+        // Use API route to fetch profiles (bypasses RLS)
+        const response = await fetch('/api/profiles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userIds }),
+        });
+
+        const profilesData = response.ok ? await response.json() : [];
 
         const membersWithProfiles = membersData.map((m: BandMember) => ({
           ...m,
-          profiles: profilesData?.find(p => p.id === m.user_id) || {
+          profiles: profilesData?.find((p: { id: string }) => p.id === m.user_id) || {
             id: m.user_id,
             full_name: null,
             email: null,
