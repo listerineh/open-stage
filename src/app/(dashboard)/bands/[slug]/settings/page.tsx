@@ -172,7 +172,7 @@ export default function BandSettingsPage() {
 
   if (!band) {
     return (
-      <div className="mx-auto max-w-4xl px-6 py-10 text-center">
+      <div className="mx-auto max-w-4xl px-4 py-6 pt-16 text-center sm:px-6 sm:py-10 lg:pt-10">
         <h1 className="text-xl font-semibold text-white">Banda no encontrada</h1>
         <Link href="/bands" className="mt-4 inline-block text-violet-400 hover:text-violet-300">
           Volver a mis bandas
@@ -182,7 +182,7 @@ export default function BandSettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-10 md:px-8 lg:px-12">
+    <div className="mx-auto max-w-4xl px-4 py-6 pt-16 sm:px-6 sm:py-10 md:px-8 lg:px-12 lg:pt-10">
       {/* Back link */}
       <Link
         href={`/bands/${band.slug}`}
