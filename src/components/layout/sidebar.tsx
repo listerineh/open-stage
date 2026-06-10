@@ -124,12 +124,11 @@ export function Sidebar({ user }: SidebarProps) {
     <div className="flex h-full flex-col">
       {/* Logo */}
       <div className="flex h-25 items-center justify-between border-b border-zinc-800 px-4">
-        <Link
-          href="/dashboard"
-          onClick={() => setIsOpen(false)}
-          className="flex items-center gap-3"
-        >
+        <Link href="/dashboard" onClick={() => setIsOpen(false)} className="relative">
           <Logo size="lg" />
+          <span className="absolute -bottom-3 -right-7 rounded-full bg-zinc-800/50 px-2 py-0.5 text-[10px] font-medium text-zinc-400">
+            alpha-v0.4.4
+          </span>
         </Link>
         <button
           onClick={() => setIsOpen(false)}
