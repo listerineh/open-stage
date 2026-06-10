@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Save, Loader2, Trash2, Copy, Check, Plus, AlertTriangle } from 'lucide-react';
 import { LogoUpload } from '@/components/ui/logo-upload';
+import { DriveConnect } from '@/components/features/drive';
 import type { Band, BandInvitation } from '@/types/database';
 
 const GENRES = [
@@ -181,7 +182,7 @@ export default function BandSettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-10 md:px-8 lg:px-12">
+    <div className="mx-auto max-w-4xl px-6 py-10 md:px-8 lg:px-12">
       {/* Back link */}
       <Link
         href={`/bands/${band.slug}`}
@@ -277,6 +278,17 @@ export default function BandSettingsPage() {
             )}
           </div>
         </form>
+      </section>
+
+      {/* Google Drive Integration */}
+      <section id="drive" className="mt-10">
+        <h2 className="text-lg font-medium text-white">Almacenamiento de Clips</h2>
+        <p className="mt-1 text-sm text-zinc-500">
+          Conecta Google Drive para guardar automáticamente los clips generados
+        </p>
+        <div className="mt-4">
+          <DriveConnect band={band} onUpdate={setBand} />
+        </div>
       </section>
 
       {/* Invitations */}

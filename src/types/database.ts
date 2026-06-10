@@ -19,6 +19,32 @@ export interface Band {
   logo_url: string | null;
   genre: string | null;
   created_by: string | null;
+  // Google Drive integration
+  drive_folder_id: string | null;
+  drive_folder_name: string | null;
+  drive_connected_at: string | null;
+  drive_connected_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ClipFormat = 'tiktok' | 'reels' | 'shorts' | 'instagram' | 'youtube';
+
+export interface Clip {
+  id: string;
+  band_id: string;
+  created_by: string;
+  name: string;
+  description: string | null;
+  duration: number;
+  format: ClipFormat;
+  aspect_ratio: string;
+  drive_file_id: string;
+  drive_url: string;
+  thumbnail_url: string | null;
+  source_video_url: string | null;
+  start_time: number | null;
+  end_time: number | null;
   created_at: string;
   updated_at: string;
 }
