@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Mail, Calendar, Shield, LogOut, Loader2 } from 'lucide-react';
+import { Mail, Calendar, Shield, LogOut, Loader2, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -80,7 +80,16 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-10 md:px-8">
+    <div className="mx-auto max-w-4xl px-6 py-10 md:px-8 lg:px-12">
+      {/* Back link */}
+      <Link
+        href="/dashboard"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-white"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" />
+        Volver al dashboard
+      </Link>
+
       <div className="space-y-8">
         {/* Header */}
         <div>
@@ -176,16 +185,6 @@ export default function SettingsPage() {
               </form>
             </div>
           </div>
-        </div>
-
-        {/* Back link */}
-        <div className="pt-4">
-          <Link
-            href="/dashboard"
-            className="text-sm text-zinc-500 transition-colors hover:text-white"
-          >
-            ← Volver al dashboard
-          </Link>
         </div>
       </div>
     </div>
