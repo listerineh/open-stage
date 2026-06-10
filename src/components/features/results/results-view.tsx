@@ -17,6 +17,9 @@ import {
   Download,
   Archive,
   Play,
+  HardDrive,
+  Loader2,
+  Check,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useBandContext } from '@/contexts/band-context';
@@ -59,8 +62,12 @@ export function ResultsView() {
   const [selectedClipIndex, setSelectedClipIndex] = useState(0);
   const [downloadedClips, setDownloadedClips] = useState<Set<string>>(new Set());
   const [isDownloadingAll, setIsDownloadingAll] = useState(false);
+  const [savedToDrive, setSavedToDrive] = useState<Set<string>>(new Set());
+  const [savingToDrive, setSavingToDrive] = useState<string | null>(null);
+  const [savingAllToDrive, setSavingAllToDrive] = useState(false);
 
   const selectedClip = clips[selectedClipIndex] || null;
+  const canSaveToDrive = currentBand?.drive_folder_id;
 
   useEffect(() => {
     if (clips.length === 0) {
@@ -126,6 +133,55 @@ export function ResultsView() {
     localStorage.removeItem('openstage-clips');
     localStorage.removeItem('openstage-wizard-state');
     router.push('/tools/clip-generator');
+  };
+
+  const handleSaveToDrive = async (clip: StoredClip) => {
+    if (!currentBand?.id || !canSaveToDrive) return;
+
+    setSavingToDrive(clip.id);
+    try {
+      // Fetch the blob from the URL
+      const response = await fetch(clip.url);
+      const blob = await response.blob();
+
+      // Create form data
+      const formData = new FormData();
+      formData.append('file', blob, `${clip.name}.mp4`);
+      formData.append('bandId', currentBand.id);
+      formData.append('name', clip.name);
+      formData.append('duration', clip.duration.toString());
+      formData.append('format', clip.format.id);
+      formData.append('aspectRatio', clip.format.aspectRatio);
+
+      const uploadResponse = await fetch('/api/drive/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (uploadResponse.ok) {
+        setSavedToDrive(prev => new Set(prev).add(clip.id));
+      } else {
+        const error = await uploadResponse.json();
+        console.error('Upload failed:', error);
+        alert(error.error || 'Error al guardar en Drive');
+      }
+    } catch (error) {
+      console.error('Error saving to Drive:', error);
+      alert('Error al guardar en Drive');
+    }
+    setSavingToDrive(null);
+  };
+
+  const handleSaveAllToDrive = async () => {
+    if (!currentBand?.id || !canSaveToDrive) return;
+
+    setSavingAllToDrive(true);
+    for (const clip of clips) {
+      if (!savedToDrive.has(clip.id)) {
+        await handleSaveToDrive(clip);
+      }
+    }
+    setSavingAllToDrive(false);
   };
 
   const formatTime = (seconds: number) => {
@@ -203,7 +259,7 @@ export function ResultsView() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={handleClearAndRestart}
             className="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-800/50 px-4 py-2.5 text-sm font-medium text-zinc-300 transition-all hover:border-zinc-600 hover:bg-zinc-800 hover:text-white"
@@ -211,10 +267,34 @@ export function ResultsView() {
             <RefreshCw className="h-4 w-4" />
             Nuevo video
           </button>
+          {canSaveToDrive && (
+            <button
+              onClick={handleSaveAllToDrive}
+              disabled={savingAllToDrive || clips.every(c => savedToDrive.has(c.id))}
+              className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-sm font-medium text-emerald-400 transition-all hover:border-emerald-500/50 hover:bg-emerald-500/20 disabled:opacity-50"
+            >
+              {savingAllToDrive ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Guardando...
+                </>
+              ) : clips.every(c => savedToDrive.has(c.id)) ? (
+                <>
+                  <Check className="h-4 w-4" />
+                  Guardados en Drive
+                </>
+              ) : (
+                <>
+                  <HardDrive className="h-4 w-4" />
+                  Guardar en Drive
+                </>
+              )}
+            </button>
+          )}
           <button
             onClick={handleDownloadAll}
             disabled={isDownloadingAll}
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-violet-500/25 transition-all hover:shadow-violet-500/40 disabled:opacity-50"
+            className="flex items-center gap-2 rounded-xl bg-linear-to-r from-violet-600 to-purple-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-violet-500/25 transition-all hover:shadow-violet-500/40 disabled:opacity-50"
           >
             {isDownloadingAll ? (
               <>
@@ -342,6 +422,8 @@ export function ResultsView() {
               {clips.map((clip, index) => {
                 const isSelected = index === selectedClipIndex;
                 const isDownloaded = downloadedClips.has(clip.id);
+                const isSavedToDrive = savedToDrive.has(clip.id);
+                const isSaving = savingToDrive === clip.id;
 
                 return (
                   <button
@@ -377,6 +459,12 @@ export function ResultsView() {
                           >
                             {clip.name}
                           </p>
+                          {isSaving && (
+                            <Loader2 className="h-4 w-4 shrink-0 animate-spin text-emerald-400" />
+                          )}
+                          {isSavedToDrive && !isSaving && (
+                            <HardDrive className="h-4 w-4 shrink-0 text-emerald-400" />
+                          )}
                           {isDownloaded && (
                             <CheckCircle2 className="h-4 w-4 shrink-0 text-green-400" />
                           )}

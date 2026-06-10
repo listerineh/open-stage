@@ -74,6 +74,7 @@ export interface UserBand {
   name: string;
   slug: string;
   logo_url: string | null;
+  drive_folder_id: string | null;
   role: BandRole;
   is_current: boolean;
 }

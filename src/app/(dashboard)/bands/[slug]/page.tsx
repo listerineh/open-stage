@@ -22,6 +22,7 @@ import {
   UserMinus,
   LogOut,
   ShieldCheck,
+  Video,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Band, BandMember, BandRole, Profile } from '@/types/database';
@@ -223,14 +224,30 @@ export default function BandDetailPage() {
           </div>
         </div>
 
-        {isAdmin && (
-          <Link href={`/bands/${band.slug}/settings`}>
-            <Button variant="outline" className="border-zinc-700 bg-transparent hover:bg-zinc-800">
-              <Settings className="mr-2 h-4 w-4" />
-              Configuración
-            </Button>
-          </Link>
-        )}
+        <div className="flex items-center gap-2">
+          {band.drive_folder_id && (
+            <Link href={`/bands/${band.slug}/clips`}>
+              <Button
+                variant="outline"
+                className="border-zinc-700 bg-transparent hover:bg-zinc-800"
+              >
+                <Video className="mr-2 h-4 w-4" />
+                Clips
+              </Button>
+            </Link>
+          )}
+          {isAdmin && (
+            <Link href={`/bands/${band.slug}/settings`}>
+              <Button
+                variant="outline"
+                className="border-zinc-700 bg-transparent hover:bg-zinc-800"
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                Configuración
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
 
       {/* Members section */}
