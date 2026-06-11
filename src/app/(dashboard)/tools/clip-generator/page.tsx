@@ -377,7 +377,7 @@ export default function ClipGeneratorPage() {
                   <p className="text-sm text-zinc-400">Analizando audio del video...</p>
                   <p className="text-xs text-zinc-600">Esto puede tomar unos segundos</p>
                 </div>
-              ) : audioMoments.length > 0 ? (
+              ) : audioMoments && audioMoments.length > 0 ? (
                 <div className="space-y-6">
                   <AudioTimeline
                     moments={audioMoments}
