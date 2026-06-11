@@ -77,18 +77,26 @@ export function AudioMomentsCategorized({
       // Create a new audio element for this preview
       const audio = new Audio(`/api/download-video?fileId=${fileId}`);
 
-      // Set the start time
-      const startTime = Math.max(0, moment.timestamp - 1.5);
-      audio.currentTime = startTime;
-
-      // Update ref
+      // Update ref immediately
       audioRef.current = audio;
-
-      console.log(`Playing preview at ${formatTimestamp(moment.timestamp)} (${startTime}s)`);
-
-      // Wait for audio to be ready and play
-      await audio.play();
       setPlayingIndex(index);
+
+      console.log(`Loading preview at ${formatTimestamp(moment.timestamp)}...`);
+
+      // Wait for metadata to be loaded before setting currentTime
+      await new Promise<void>((resolve, reject) => {
+        audio.onloadedmetadata = () => {
+          const startTime = Math.max(0, moment.timestamp - 1.5);
+          audio.currentTime = startTime;
+          console.log(`Playing from ${startTime}s`);
+          resolve();
+        };
+        audio.onerror = () => reject(new Error('Failed to load audio'));
+        audio.load();
+      });
+
+      // Now play the audio
+      await audio.play();
 
       // Stop after 3 seconds
       const timeout = setTimeout(() => {
