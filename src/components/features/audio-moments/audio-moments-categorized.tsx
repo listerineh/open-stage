@@ -286,7 +286,7 @@ export function AudioMomentsCategorized({
               <div
                 key={originalIndex}
                 className={cn(
-                  'group relative rounded-lg border p-3 transition-all sm:p-4',
+                  'group relative w-full max-w-full rounded-lg border p-3 transition-all sm:p-4',
                   isSelected
                     ? 'border-violet-500/50 bg-violet-500/10'
                     : 'border-zinc-800 bg-zinc-900/50 hover:border-zinc-700 hover:bg-zinc-900'
@@ -304,11 +304,11 @@ export function AudioMomentsCategorized({
                   </div>
 
                   {/* Content */}
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 overflow-hidden">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0 flex-1">
+                      <div className="min-w-0 flex-1 overflow-hidden">
                         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
-                          <p className="text-xs font-medium text-white sm:text-sm">
+                          <p className="break-words text-xs font-medium text-white sm:text-sm">
                             {getMomentDescription(moment)}
                           </p>
                           {isTopMoment && (
