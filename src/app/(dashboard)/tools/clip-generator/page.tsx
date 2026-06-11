@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, startTransition } from 'react';
+import { useState, useEffect, useCallback, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { VideoUrlInput } from '@/components/features/video-upload';
 import {
@@ -121,13 +121,18 @@ export default function ClipGeneratorPage() {
     subtitleSettings,
   } = wizardState;
 
-  const updateWizard = (updates: Partial<WizardState>) => {
+  const updateWizard = useCallback((updates: Partial<WizardState>) => {
     setWizardState(prev => ({ ...prev, ...updates }));
-  };
+  }, []);
 
   // Analyze audio when entering moments step
   useEffect(() => {
-    if (currentStep === 'moments' && videoUrl && audioMoments.length === 0 && !isAnalyzing) {
+    if (
+      currentStep === 'moments' &&
+      videoUrl &&
+      (!audioMoments || audioMoments.length === 0) &&
+      !isAnalyzing
+    ) {
       analyze(videoUrl).then(() => {
         if (audioResult) {
           updateWizard({
@@ -137,7 +142,7 @@ export default function ClipGeneratorPage() {
         }
       });
     }
-  }, [currentStep, videoUrl, audioMoments.length, isAnalyzing, analyze, audioResult]);
+  }, [currentStep, videoUrl, audioMoments, isAnalyzing, analyze, audioResult, updateWizard]);
 
   const currentStepIndex = STEPS.findIndex(s => s.id === currentStep);
 
