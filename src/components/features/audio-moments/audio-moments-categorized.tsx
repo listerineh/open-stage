@@ -198,7 +198,7 @@ export function AudioMomentsCategorized({
   }
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn('w-full space-y-4 overflow-x-hidden', className)}>
       {/* Timeline */}
       <AudioTimeline
         moments={filteredMoments}

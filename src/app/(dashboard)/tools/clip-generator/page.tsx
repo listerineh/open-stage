@@ -323,7 +323,7 @@ export default function ClipGeneratorPage() {
         </div>
 
         {/* Step content */}
-        <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 sm:rounded-2xl sm:p-6 md:p-8">
+        <div className="overflow-x-hidden rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 sm:rounded-2xl sm:p-6 md:p-8">
           {currentStep === 'video' && (
             <div className="space-y-6">
               <div>
@@ -377,7 +377,7 @@ export default function ClipGeneratorPage() {
           )}
 
           {currentStep === 'moments' && (
-            <div className="space-y-6">
+            <div className="space-y-6 overflow-x-hidden">
               <div>
                 <h2 className="text-lg font-medium text-white">Momentos detectados</h2>
                 <p className="mt-1 text-sm text-zinc-500">
