@@ -28,31 +28,30 @@ export function AudioMomentsCategorized({
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 
   // Initialize audio element
   useEffect(() => {
-    if (!audioElement && videoUrl) {
+    if (!audioRef.current && videoUrl) {
       // Extract fileId from URL
       const fileIdMatch = videoUrl.match(/\/d\/([^/]+)/);
       if (fileIdMatch) {
         const fileId = fileIdMatch[1];
         const audio = new Audio(`/api/download-video?fileId=${fileId}`);
-        audio.preload = 'metadata';
+        audio.preload = 'auto';
         audioRef.current = audio;
 
-        // Use setTimeout to avoid setState in effect
-        setTimeout(() => setAudioElement(audio), 0);
+        console.log('Audio element initialized for fileId:', fileId);
       }
     }
 
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
+        audioRef.current.src = '';
         audioRef.current = null;
       }
     };
-  }, [videoUrl, audioElement]);
+  }, [videoUrl]);
 
   const playPreview = async (moment: AudioMoment, index: number) => {
     if (!audioRef.current) {
