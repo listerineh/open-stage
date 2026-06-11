@@ -254,11 +254,20 @@
 
 > Mejora del generador de clips con IA
 
-### 5.1 Análisis de Audio (Cliente)
+### 5.1 Análisis de Audio (Cliente) ✅ COMPLETADO
 
-- [ ] Integrar Web Audio API para análisis de energía
-- [ ] Detectar picos de audio (aplausos, gritos, drops)
-- [ ] Detectar silencios y transiciones
+- [x] Integrar Web Audio API para análisis de energía
+- [x] Detectar picos de audio (aplausos, gritos, drops)
+- [x] Detectar silencios y transiciones
+- [x] Crear utilidad `analyzer.ts` con cálculo de RMS
+- [x] Hook `useAudioAnalysis` para React
+- [x] Componente `AudioMomentsList` para mostrar momentos
+- [x] Componente `AudioTimeline` con visualización temporal
+- [x] Integrar en wizard del Clip Generator
+- [x] Nuevo step "Momentos" en el flujo
+- [x] Análisis automático al entrar al step
+- [x] Selección/deselección de momentos
+- [x] Guardar momentos en estado del wizard
 
 ### 5.2 Transcripción con Whisper
 
@@ -275,8 +284,8 @@
 
 ### 5.4 UI de Sugerencias
 
-- [ ] Timeline visual con momentos detectados
-- [ ] Selección/deselección de momentos
+- [x] Timeline visual con momentos detectados
+- [x] Selección/deselección de momentos
 - [ ] Preview rápido de cada momento
 - [ ] Tag: v0.5.0
 
