@@ -236,7 +236,7 @@ export function AudioMomentsCategorized({
       </div>
 
       {/* Info banner */}
-      <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 sm:p-4">
+      <div className="w-full max-w-full rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 sm:p-4">
         <div className="flex items-start gap-2 sm:gap-3">
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-violet-500/10 sm:h-8 sm:w-8">
             <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400 sm:h-4 sm:w-4" />
@@ -267,7 +267,7 @@ export function AudioMomentsCategorized({
       </div>
 
       {/* Moments list */}
-      <div className="space-y-2">
+      <div className="w-full max-w-full space-y-2">
         {filteredMoments.length === 0 ? (
           <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-6 text-center">
             <p className="text-sm text-zinc-500">No hay momentos en esta categoría</p>
@@ -377,14 +377,14 @@ export function AudioMomentsCategorized({
                     </div>
 
                     {/* Energy bar */}
-                    <div className="mt-3">
+                    <div className="mt-3 w-full max-w-full">
                       <div className="mb-1 flex items-center justify-between">
                         <span className="text-xs text-zinc-600">Energía</span>
                         <span className="text-xs text-zinc-500">
                           {Math.round(moment.energy * 100)}%
                         </span>
                       </div>
-                      <div className="h-1 overflow-hidden rounded-full bg-zinc-800">
+                      <div className="h-1 w-full max-w-full overflow-hidden rounded-full bg-zinc-800">
                         <div
                           className={cn(
                             'h-full transition-all',

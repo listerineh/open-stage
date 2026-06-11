@@ -34,7 +34,7 @@ export function AudioTimeline({
   };
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn('w-full max-w-full space-y-3', className)}>
       <div className="flex items-center justify-between text-xs text-zinc-500">
         <span>0:00</span>
         <span>Timeline</span>
@@ -42,7 +42,7 @@ export function AudioTimeline({
       </div>
 
       {/* Timeline bar */}
-      <div className="relative h-12 rounded-lg border border-zinc-800 bg-zinc-900/50">
+      <div className="relative h-12 w-full max-w-full rounded-lg border border-zinc-800 bg-zinc-900/50">
         {/* Background grid */}
         <div className="absolute inset-0 flex">
           {Array.from({ length: 10 }).map((_, i) => (
