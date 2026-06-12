@@ -63,19 +63,37 @@ export function AudioMomentsMobileV2({
 
       // Tiempo de inicio deseado
       const startTime = Math.max(0, m.timestamp - 1.5);
+      console.log(`[Preview] Momento ${i}: timestamp=${m.timestamp}, startTime=${startTime}`);
 
       // Esperar a que cargue metadata
       await new Promise<void>((resolve, reject) => {
-        media.onloadedmetadata = () => resolve();
+        media.onloadedmetadata = () => {
+          console.log(`[Preview] Metadata loaded, duration=${media.duration}`);
+          resolve();
+        };
         media.onerror = () => reject(new Error('Error loading'));
         media.load();
       });
 
-      // Hacer seek y esperar un momento
+      // Hacer seek
       media.currentTime = startTime;
-      await new Promise(r => setTimeout(r, 200));
+      console.log(`[Preview] Set currentTime to ${startTime}`);
+
+      // Esperar a que el seek se complete
+      await new Promise<void>(resolve => {
+        media.onseeked = () => {
+          console.log(`[Preview] Seeked to ${media.currentTime}`);
+          resolve();
+        };
+        // Fallback
+        setTimeout(() => {
+          console.log(`[Preview] Fallback, currentTime=${media.currentTime}`);
+          resolve();
+        }, 500);
+      });
 
       await media.play();
+      console.log(`[Preview] Playing from ${media.currentTime}`);
       setLoading(null);
       setPlaying(i);
 
