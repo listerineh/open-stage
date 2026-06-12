@@ -20,21 +20,27 @@ export function CookieConsent() {
   );
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+
     let isMounted = true;
     let timer: NodeJS.Timeout | undefined;
 
     async function checkConsent() {
-      const prefs = await getCookiePreferences();
+      try {
+        const prefs = await getCookiePreferences();
 
-      if (!isMounted) return;
+        if (!isMounted) return;
 
-      if (prefs === null) {
-        // User hasn't accepted cookies yet - show banner
-        timer = setTimeout(() => {
-          if (isMounted) setIsVisible(true);
-        }, 500);
+        if (prefs === null) {
+          // User hasn't accepted cookies yet - show banner
+          timer = setTimeout(() => {
+            if (isMounted) setIsVisible(true);
+          }, 500);
+        }
+      } catch (error) {
+        console.error('Error checking cookie consent:', error);
       }
-      // No need to setPreferences here - already loaded from localStorage
     }
 
     checkConsent();
