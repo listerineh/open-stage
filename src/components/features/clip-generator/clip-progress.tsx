@@ -158,7 +158,7 @@ export function ClipProgressList({
 
             {/* Video preview - Mobile first responsive */}
             {isComplete && clip && (
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                 {/* Video container - Full width en mobile, fixed en desktop */}
                 <div className="relative mx-auto w-full max-w-70 overflow-hidden rounded-xl bg-black sm:mx-0 sm:w-40 sm:shrink-0 md:w-48">
                   <div className="aspect-9/16">
@@ -187,12 +187,12 @@ export function ClipProgressList({
                   </button>
                 </div>
 
-                {/* Actions - Stack en mobile, column en desktop */}
-                <div className="flex flex-1 flex-col gap-2">
-                  {/* Descargar - Touch friendly 44px min height */}
+                {/* Actions - Centrado vertical en desktop */}
+                <div className="flex flex-1 flex-col justify-center gap-2">
+                  {/* Descargar */}
                   <button
                     onClick={() => onDownload(clip)}
-                    className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-violet-500/20 px-4 py-3 text-sm font-medium text-violet-400 transition-colors hover:bg-violet-500/30 active:scale-[0.98] sm:py-2.5"
+                    className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-violet-500/20 px-4 py-2.5 text-sm font-medium text-violet-400 transition-colors hover:bg-violet-500/30 active:scale-[0.98]"
                   >
                     <Download className="h-4 w-4" />
                     <span>Descargar</span>
@@ -204,7 +204,7 @@ export function ClipProgressList({
                       onClick={() => handleSaveToDrive(clip)}
                       disabled={savingToDrive === clip.id || savedToDrive.has(clip.id)}
                       className={cn(
-                        'flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium transition-colors active:scale-[0.98] sm:py-2.5',
+                        'flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors active:scale-[0.98]',
                         savedToDrive.has(clip.id)
                           ? 'bg-emerald-500/20 text-emerald-400'
                           : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
@@ -224,7 +224,7 @@ export function ClipProgressList({
                   ) : onConnectDrive ? (
                     <button
                       onClick={onConnectDrive}
-                      className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-zinc-800 px-4 py-3 text-sm font-medium text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-300 active:scale-[0.98] sm:py-2.5"
+                      className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-zinc-800 px-4 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-300 active:scale-[0.98]"
                     >
                       <CloudOff className="h-4 w-4" />
                       <span>Conectar Drive</span>
