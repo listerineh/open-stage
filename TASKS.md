@@ -350,11 +350,28 @@
 
 - [x] Integrar Shepherd.js para tutoriales
 - [x] Tema personalizado CSS para OpenStage
-- [x] Hook useTour con persistencia en localStorage
+- [x] Hook useTour con persistencia en Supabase
 - [x] Auto-start en primera visita
 - [x] Botón de ayuda (?) para reiniciar tour
 - [x] Indicador de progreso con dots
 - [x] Tours predefinidos: bands, dashboard, clip-generator
+- [x] Botón "Reiniciar tutoriales" en settings
+- [x] Fix: marcar tour como completado al saltar o cerrar
+- [x] Fix: overlay blur optimizado (2px, 0.3 opacity)
+
+### 5.11 Páginas Legales y Cookies ✅ COMPLETADO
+
+- [x] Página de Política de Privacidad (/privacy)
+- [x] Página de Política de Cookies (/cookies)
+- [x] Banner de consentimiento de cookies (GDPR compliant)
+- [x] Configuración de cookies en /settings
+- [x] Persistencia en Supabase (profiles.cookie_preferences)
+- [x] Fallback a localStorage para usuarios no logueados
+- [x] Helpers: hasConsentFor(), shouldLoadAnalytics()
+- [x] BackButton inteligente (redirige a /dashboard si logueado)
+- [x] Consentimiento explícito requerido (default NULL)
+- [x] Banner full-width con gradiente violeta
+- [x] Toggles para cookies funcionales y analytics
 
 ---
 
@@ -441,8 +458,9 @@
 | 2026-06-12 | -       | "Canciones completas" marcado como Próximamente                       |
 | 2026-06-12 | -       | Top 5 sugerencias, preview audio con blob, retry rate limits          |
 | 2026-06-12 | -       | Modal crear banda, selector géneros multi-select con chips            |
-| 2026-06-12 | -       | Sistema de tours guiados con Shepherd.js                              |
+| 2026-06-12 | -       | Sistema de tours guiados con Shepherd.js, persistencia Supabase       |
+| 2026-06-12 | -       | Páginas legales (privacy, cookies), banner GDPR, config en settings   |
 
 ---
 
-Última actualización: 12 de Junio 2026 (3:40am)
+Última actualización: 12 de Junio 2026 (4:26am)
