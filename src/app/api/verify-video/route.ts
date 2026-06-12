@@ -53,9 +53,25 @@ export async function POST(request: NextRequest) {
     console.log('[verify-video] Embed response status:', embedResponse.status);
 
     if (embedResponse.status === 200) {
+      // Intentar obtener el nombre del archivo desde la página de Drive
+      let fileName = 'video';
+      try {
+        const pageResponse = await fetch(`https://drive.google.com/file/d/${fileId}/view`);
+        const html = await pageResponse.text();
+        // Buscar el título en el HTML
+        const titleMatch = html.match(/<title>([^<]+)<\/title>/);
+        if (titleMatch) {
+          // El título suele ser "nombre.mp4 - Google Drive"
+          fileName = titleMatch[1].replace(' - Google Drive', '').trim();
+        }
+      } catch {
+        // Ignorar errores al obtener el nombre
+      }
+
       return NextResponse.json({
         accessible: true,
         fileId,
+        fileName,
         contentType: 'video/mp4', // Asumimos video ya que pasó la validación de URL
         message: 'Video accesible públicamente',
       });
@@ -72,6 +88,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       accessible: true,
       fileId,
+      fileName: 'video',
       contentType: 'video/mp4',
       message: 'Video verificado',
     });

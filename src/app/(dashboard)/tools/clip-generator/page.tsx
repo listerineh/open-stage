@@ -49,6 +49,7 @@ const INTENT_TO_MOMENT_TYPES: Record<string, AudioMoment['type'][]> = {
 interface VideoInfo {
   accessible: boolean;
   fileId?: string;
+  fileName?: string;
   contentType?: string;
   contentLength?: number;
 }
@@ -297,13 +298,18 @@ export default function ClipGeneratorPage() {
   };
 
   const handleStartGeneration = () => {
-    if (!videoUrl || audioMoments.length === 0) return;
+    if (!videoUrl || audioMoments.length === 0 || selectedFormats.length === 0) return;
+
+    // Extraer nombre del video de videoInfo o URL
+    const videoName = videoInfo?.fileName || 'video';
+
     clipGenerator.generate(
       videoUrl,
       audioMoments,
       selectedMomentIndices,
       audioDuration,
-      selectedFormats[0] || 'tiktok'
+      selectedFormats,
+      videoName
     );
   };
 

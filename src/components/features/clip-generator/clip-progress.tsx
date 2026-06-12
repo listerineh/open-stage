@@ -49,10 +49,6 @@ export function ClipProgressList({
     }
   };
 
-  const getClipForMoment = (momentIndex: number) => {
-    return clips.find(c => c.momentIndex === momentIndex);
-  };
-
   const togglePlay = (clipId: string) => {
     const video = videoRefs.current.get(clipId);
     if (!video) return;
@@ -104,12 +100,12 @@ export function ClipProgressList({
   return (
     <div className="flex w-full flex-col gap-3">
       {progress.map(p => {
-        const clip = getClipForMoment(p.momentIndex);
+        const clip = clips.find(c => c.format.id === p.formatId && c.momentIndex === p.momentIndex);
         const isComplete = p.stage === 'done' && clip;
 
         return (
           <div
-            key={p.momentIndex}
+            key={p.id}
             className={cn(
               'flex w-full flex-col gap-3 rounded-lg border p-3',
               p.stage === 'error'
@@ -121,9 +117,12 @@ export function ClipProgressList({
           >
             {/* Header */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 {getStageIcon(p.stage)}
                 <span className="text-sm font-medium text-white">Clip {p.momentIndex + 1}</span>
+                <span className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] font-medium uppercase text-zinc-400">
+                  {p.formatId}
+                </span>
                 {clip && (
                   <span className="text-xs text-zinc-500">
                     {formatTimestamp(clip.timestamp)} • {clip.duration}s
@@ -132,7 +131,7 @@ export function ClipProgressList({
               </div>
               <span
                 className={cn(
-                  'text-xs font-medium',
+                  'text-xs font-medium shrink-0',
                   p.stage === 'error'
                     ? 'text-red-400'
                     : p.stage === 'done'

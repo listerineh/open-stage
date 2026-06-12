@@ -84,16 +84,19 @@ async function downloadVideoData(
 
 async function generateSingleClip(
   ff: FFmpeg,
-  config: ClipConfig,
+  config: ClipConfig & { formatId: string },
   onProgress: (progress: ClipProgress) => void
 ): Promise<Blob> {
-  const { momentIndex, startTime, duration, format } = config;
+  const { momentIndex, startTime, duration, format, formatId } = config;
+  const progressId = `${formatId}-${momentIndex}`;
 
   onProgress({
+    id: progressId,
     momentIndex,
+    formatId,
     stage: 'processing',
     progress: 0,
-    message: 'Preparando clip...',
+    message: `Preparando clip (${format.name})...`,
   });
 
   const outputName = `clip_${momentIndex}.mp4`;
@@ -134,10 +137,12 @@ async function generateSingleClip(
   progressState.callback = (progress: number) => {
     const percent = Math.round(progress * 100);
     onProgress({
+      id: progressId,
       momentIndex,
+      formatId,
       stage: 'encoding',
       progress: percent,
-      message: `Codificando... ${percent}%`,
+      message: `Codificando (${format.name})... ${percent}%`,
     });
   };
 
@@ -147,7 +152,9 @@ async function generateSingleClip(
   progressState.callback = null;
 
   onProgress({
+    id: progressId,
     momentIndex,
+    formatId,
     stage: 'encoding',
     progress: 95,
     message: 'Finalizando...',
@@ -160,10 +167,12 @@ async function generateSingleClip(
   await ff.deleteFile(outputName);
 
   onProgress({
+    id: progressId,
     momentIndex,
+    formatId,
     stage: 'done',
     progress: 100,
-    message: 'Clip generado',
+    message: `Clip generado (${format.name})`,
   });
 
   return blob;
@@ -171,24 +180,22 @@ async function generateSingleClip(
 
 export async function generateMultipleClips(
   videoUrl: string,
-  configs: ClipConfig[],
+  configs: (ClipConfig & { formatId: string })[],
+  formatId: string,
   onProgress: (progress: ClipProgress) => void,
-  onClipComplete: (momentIndex: number, blob: Blob) => void
+  onClipComplete: (momentIndex: number, blob: Blob, config: ClipConfig) => void
 ): Promise<void> {
-  // Marcar todos como en cola
-  for (const config of configs) {
-    onProgress({
-      momentIndex: config.momentIndex,
-      stage: 'queued',
-      progress: 0,
-      message: 'En cola...',
-    });
-  }
+  const firstConfig = configs[0];
+  if (!firstConfig) return;
+
+  const firstProgressId = `${formatId}-${firstConfig.momentIndex}`;
 
   // Cargar FFmpeg una sola vez
   const ff = await loadFFmpeg(msg => {
     onProgress({
-      momentIndex: configs[0]?.momentIndex ?? 0,
+      id: firstProgressId,
+      momentIndex: firstConfig.momentIndex,
+      formatId,
       stage: 'downloading',
       progress: 5,
       message: msg,
@@ -197,7 +204,9 @@ export async function generateMultipleClips(
 
   // Descargar video una sola vez
   onProgress({
-    momentIndex: configs[0]?.momentIndex ?? 0,
+    id: firstProgressId,
+    momentIndex: firstConfig.momentIndex,
+    formatId,
     stage: 'downloading',
     progress: 10,
     message: 'Descargando video...',
@@ -206,7 +215,9 @@ export async function generateMultipleClips(
   const videoData = await downloadVideoData(videoUrl, (received, total) => {
     const progress = total > 0 ? Math.round((received / total) * 100) : 0;
     onProgress({
-      momentIndex: configs[0]?.momentIndex ?? 0,
+      id: firstProgressId,
+      momentIndex: firstConfig.momentIndex,
+      formatId,
       stage: 'downloading',
       progress: Math.min(progress, 25),
       message: `Descargando... ${Math.round(received / 1024 / 1024)}MB`,
@@ -216,23 +227,18 @@ export async function generateMultipleClips(
   // Escribir input una sola vez
   await ff.writeFile('input.mp4', videoData);
 
-  // Marcar descarga como completada para el primer clip
-  onProgress({
-    momentIndex: configs[0]?.momentIndex ?? 0,
-    stage: 'processing',
-    progress: 0,
-    message: 'Video descargado, procesando clips...',
-  });
-
   // Generar cada clip reutilizando el input
   for (const config of configs) {
+    const progressId = `${formatId}-${config.momentIndex}`;
     try {
       const blob = await generateSingleClip(ff, config, onProgress);
-      onClipComplete(config.momentIndex, blob);
+      onClipComplete(config.momentIndex, blob, config);
     } catch (error) {
       console.error(`Error generating clip ${config.momentIndex}:`, error);
       onProgress({
+        id: progressId,
         momentIndex: config.momentIndex,
+        formatId,
         stage: 'error',
         progress: 0,
         message: error instanceof Error ? error.message : 'Error desconocido',

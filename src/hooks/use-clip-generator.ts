@@ -6,8 +6,11 @@ import {
   type ClipResult,
   type ClipProgress,
   type GeneratorState,
+  type ClipConfig,
   CLIP_FORMATS,
+  generateClipFilename,
 } from '@/lib/clip-generator/types';
+export { generateClipFilename };
 import { generateClipConfigs } from '@/lib/clip-generator/duration';
 import { generateMultipleClips } from '@/lib/clip-generator/ffmpeg-worker';
 
@@ -23,6 +26,7 @@ const initialState: GeneratorState = {
 export function useClipGenerator() {
   const [state, setState] = useState<GeneratorState>(initialState);
   const abortRef = useRef(false);
+  const videoNameRef = useRef<string>('video');
 
   const generate = useCallback(
     async (
@@ -30,26 +34,38 @@ export function useClipGenerator() {
       moments: AudioMoment[],
       selectedIndices: number[],
       videoDuration: number,
-      formatId: string = 'tiktok'
+      formatIds: string[],
+      videoName: string = 'video'
     ) => {
       if (state.isGenerating) return;
 
       abortRef.current = false;
+      videoNameRef.current = videoName;
 
-      const format = CLIP_FORMATS.find(f => f.id === formatId) || CLIP_FORMATS[0];
-      const configs = generateClipConfigs(moments, selectedIndices, videoDuration, format);
+      // Generar configs para cada formato seleccionado
+      const allConfigs: (ClipConfig & { formatId: string })[] = [];
+      for (const formatId of formatIds) {
+        const format = CLIP_FORMATS.find(f => f.id === formatId) || CLIP_FORMATS[0];
+        const configs = generateClipConfigs(moments, selectedIndices, videoDuration, format);
+        configs.forEach(c => allConfigs.push({ ...c, formatId }));
+      }
+
+      // Crear progreso inicial para cada clip de cada formato
+      const initialProgress: ClipProgress[] = allConfigs.map(c => ({
+        id: `${c.formatId}-${c.momentIndex}`,
+        momentIndex: c.momentIndex,
+        formatId: c.formatId,
+        stage: 'queued' as const,
+        progress: 0,
+        message: `En cola (${c.format.name})...`,
+      }));
 
       setState({
         isGenerating: true,
         currentClip: 0,
-        totalClips: configs.length,
+        totalClips: allConfigs.length,
         clips: [],
-        progress: configs.map(c => ({
-          momentIndex: c.momentIndex,
-          stage: 'queued' as const,
-          progress: 0,
-          message: 'En cola...',
-        })),
+        progress: initialProgress,
         error: null,
       });
 
@@ -66,42 +82,48 @@ export function useClipGenerator() {
       const downloadUrl = `/api/download-video?fileId=${fileIdMatch[1]}`;
 
       try {
-        await generateMultipleClips(
-          downloadUrl,
-          configs,
-          (progress: ClipProgress) => {
-            if (abortRef.current) return;
+        // Procesar por formato para reutilizar el video descargado
+        let clipNumber = 1;
+        for (const formatId of formatIds) {
+          if (abortRef.current) break;
 
-            setState(prev => ({
-              ...prev,
-              progress: prev.progress.map(p =>
-                p.momentIndex === progress.momentIndex ? progress : p
-              ),
-              currentClip: progress.stage === 'done' ? prev.currentClip + 1 : prev.currentClip,
-            }));
-          },
-          (momentIndex: number, blob: Blob) => {
-            if (abortRef.current) return;
+          const formatConfigs = allConfigs.filter(c => c.formatId === formatId);
 
-            const config = configs.find(c => c.momentIndex === momentIndex);
-            if (!config) return;
+          await generateMultipleClips(
+            downloadUrl,
+            formatConfigs,
+            formatId,
+            (progress: ClipProgress) => {
+              if (abortRef.current) return;
 
-            const result: ClipResult = {
-              id: `clip-${momentIndex}-${Date.now()}`,
-              momentIndex,
-              blob,
-              url: URL.createObjectURL(blob),
-              duration: config.duration,
-              format: config.format,
-              timestamp: config.moment.timestamp,
-            };
+              setState(prev => ({
+                ...prev,
+                progress: prev.progress.map(p => (p.id === progress.id ? progress : p)),
+                currentClip: progress.stage === 'done' ? prev.currentClip + 1 : prev.currentClip,
+              }));
+            },
+            (momentIndex: number, blob: Blob, config: ClipConfig) => {
+              if (abortRef.current) return;
 
-            setState(prev => ({
-              ...prev,
-              clips: [...prev.clips, result],
-            }));
-          }
-        );
+              const result: ClipResult = {
+                id: `clip-${formatId}-${momentIndex}-${Date.now()}`,
+                momentIndex,
+                clipNumber: clipNumber++,
+                blob,
+                url: URL.createObjectURL(blob),
+                duration: config.duration,
+                format: config.format,
+                timestamp: config.moment.timestamp,
+                videoName,
+              };
+
+              setState(prev => ({
+                ...prev,
+                clips: [...prev.clips, result],
+              }));
+            }
+          );
+        }
 
         setState(prev => ({
           ...prev,
@@ -134,10 +156,16 @@ export function useClipGenerator() {
     setState(initialState);
   }, [state.clips]);
 
-  const downloadClip = useCallback((clip: ClipResult, filename?: string) => {
+  const downloadClip = useCallback((clip: ClipResult) => {
+    const filename = generateClipFilename(
+      clip.videoName,
+      clip.clipNumber,
+      clip.timestamp,
+      clip.format.id
+    );
     const a = document.createElement('a');
     a.href = clip.url;
-    a.download = filename || `clip_${clip.momentIndex + 1}.mp4`;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -146,7 +174,7 @@ export function useClipGenerator() {
   const downloadAllClips = useCallback(() => {
     state.clips.forEach((clip, index) => {
       setTimeout(() => {
-        downloadClip(clip, `clip_${index + 1}.mp4`);
+        downloadClip(clip);
       }, index * 500);
     });
   }, [state.clips, downloadClip]);

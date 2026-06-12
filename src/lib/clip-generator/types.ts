@@ -21,18 +21,42 @@ export interface ClipFormat {
 export interface ClipResult {
   id: string;
   momentIndex: number;
+  clipNumber: number;
   blob: Blob;
   url: string;
   duration: number;
   format: ClipFormat;
   timestamp: number;
+  videoName: string;
 }
 
 export interface ClipProgress {
+  id: string; // Unique: `${formatId}-${momentIndex}`
   momentIndex: number;
+  formatId: string;
   stage: 'queued' | 'downloading' | 'processing' | 'encoding' | 'done' | 'error';
   progress: number;
   message: string;
+}
+
+export function formatTimestampForFilename(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}m${secs}s`;
+}
+
+export function generateClipFilename(
+  videoName: string,
+  clipNumber: number,
+  timestamp: number,
+  formatId: string
+): string {
+  const cleanName = videoName
+    .replace(/\.[^/.]+$/, '') // Remove extension
+    .replace(/[^a-zA-Z0-9-_]/g, '_') // Replace special chars
+    .substring(0, 30); // Limit length
+  const ts = formatTimestampForFilename(timestamp);
+  return `${cleanName}_clip${clipNumber}_${ts}_${formatId}.mp4`;
 }
 
 export interface GeneratorState {
