@@ -509,6 +509,7 @@ export default function ClipGeneratorPage() {
                   selectedMoments={selectedMomentIndices}
                   audioUrl={audioResult?.audioUrl}
                   duration={audioDuration || audioResult?.duration || 0}
+                  selectedIntents={selectedIntents}
                   onToggleMoment={(index: number) => {
                     const newSelected = selectedMomentIndices.includes(index)
                       ? selectedMomentIndices.filter((i: number) => i !== index)

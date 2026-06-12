@@ -11,7 +11,15 @@ interface Props {
   onToggleMoment: (index: number) => void;
   audioUrl?: string;
   duration: number;
+  selectedIntents?: string[];
 }
+
+// Mapeo de intenciones a descripciones de sugerencias
+const INTENT_LABELS: Record<string, string> = {
+  viral: 'Clips virales',
+  highlights: 'Mejores momentos',
+  funny: 'Momentos divertidos',
+};
 
 type Category = 'all' | 'peak' | 'silence' | 'transition';
 
@@ -21,6 +29,7 @@ export function AudioMomentsMobileV2({
   onToggleMoment,
   audioUrl,
   duration,
+  selectedIntents = [],
 }: Props) {
   const [category, setCategory] = useState<Category>('all');
   const [playing, setPlaying] = useState<number | null>(null);
@@ -112,6 +121,15 @@ export function AudioMomentsMobileV2({
     return !top5Indices.includes(originalIndex);
   });
 
+  // Generar label de sugerencias basado en intenciones seleccionadas
+  const suggestionsLabel =
+    selectedIntents.length > 0
+      ? selectedIntents
+          .filter(id => INTENT_LABELS[id])
+          .map(id => INTENT_LABELS[id])
+          .join(' + ')
+      : 'Nuestras sugerencias';
+
   const icon = (t: string) => (t === 'peak' ? Zap : t === 'silence' ? Volume2 : TrendingUp);
   const color = (t: string, sel: boolean) =>
     sel
@@ -196,12 +214,14 @@ export function AudioMomentsMobileV2({
         })}
       </div>
 
-      {/* Top 5 - Nuestras sugerencias */}
+      {/* Top 5 - Sugerencias según intenciones */}
       {top5Filtered.length > 0 && (
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-1.5 text-[10px] text-amber-400">
             <Star className="h-3 w-3 fill-amber-400" />
-            <span>Nuestras sugerencias ({top5Filtered.length})</span>
+            <span>
+              {suggestionsLabel} ({top5Filtered.length})
+            </span>
           </div>
           {top5Filtered.map(m => {
             const i = moments.indexOf(m);
