@@ -16,9 +16,11 @@ export function calculateSmartDuration(
   const momentConfig = DURATION_BY_MOMENT_TYPE[moment.type];
 
   // Usar la duración ideal del formato como base, ajustada por el tipo de momento
-  // El formato define la duración objetivo (ej: TikTok ~30s, Story 15s, YouTube ~2min)
   const formatIdeal = format.idealDuration;
   const maxAllowed = format.maxDuration;
+
+  // Duración mínima: al menos 50% del ideal del formato, mínimo 10 segundos
+  const minDuration = Math.max(10, Math.round(formatIdeal * 0.5));
 
   // Calcular duración base: promedio ponderado entre formato y tipo de momento
   // El formato tiene más peso (70%) porque define la plataforma objetivo
@@ -26,38 +28,52 @@ export function calculateSmartDuration(
 
   // Ajustar según confianza del momento
   if (moment.confidence > 0.8) {
-    // Momento muy confiable: puede ser un poco más largo
     idealDuration = Math.min(idealDuration * 1.15, maxAllowed);
   } else if (moment.confidence < 0.5) {
-    // Momento menos confiable: mantenerlo más corto
-    idealDuration = Math.max(idealDuration * 0.85, momentConfig.min);
+    idealDuration = Math.max(idealDuration * 0.85, minDuration);
   }
 
   // Ajustar según energía
   if (moment.energy > 0.8) {
-    // Alta energía: puede extenderse un poco
     idealDuration = Math.min(idealDuration * 1.1, maxAllowed);
   }
 
   // Asegurar que esté dentro de los límites
   idealDuration = Math.round(idealDuration);
   idealDuration = Math.min(idealDuration, maxAllowed);
-  idealDuration = Math.max(idealDuration, momentConfig.min);
+  idealDuration = Math.max(idealDuration, minDuration);
 
   const halfDuration = idealDuration / 2;
   let startTime = moment.timestamp - halfDuration;
   let endTime = moment.timestamp + halfDuration;
 
+  // Ajustar si el clip empieza antes del video
   if (startTime < 0) {
     startTime = 0;
     endTime = Math.min(idealDuration, videoDuration);
   }
 
+  // Ajustar si el clip termina después del video
   if (endTime > videoDuration) {
     endTime = videoDuration;
     startTime = Math.max(0, videoDuration - idealDuration);
   }
 
+  // Verificar si hay suficiente espacio para el clip mínimo
+  const availableDuration = endTime - startTime;
+  if (availableDuration < minDuration) {
+    // No hay suficiente espacio - extender hacia atrás si es posible
+    const needed = minDuration - availableDuration;
+    if (startTime >= needed) {
+      startTime -= needed;
+    } else {
+      // Usar todo el espacio disponible desde el inicio
+      startTime = 0;
+      endTime = Math.min(minDuration, videoDuration);
+    }
+  }
+
+  // Buscar momentos cercanos para posible extensión
   const nearbyMoments = allMoments.filter(m => {
     if (m === moment) return false;
     const diff = Math.abs(m.timestamp - moment.timestamp);
@@ -77,15 +93,15 @@ export function calculateSmartDuration(
     }
   }
 
-  // Asegurar que la duración sea positiva y válida
-  const finalDuration = Math.max(1, Math.round(endTime - startTime));
+  // Calcular duración final con mínimo garantizado
   const finalStartTime = Math.max(0, Math.round(startTime * 100) / 100);
   const finalEndTime = Math.min(videoDuration, Math.round(endTime * 100) / 100);
+  const finalDuration = Math.max(minDuration, Math.round(finalEndTime - finalStartTime));
 
   return {
     startTime: finalStartTime,
-    endTime: Math.max(finalStartTime + 1, finalEndTime),
-    duration: Math.max(1, finalDuration),
+    endTime: Math.max(finalStartTime + minDuration, finalEndTime),
+    duration: finalDuration,
   };
 }
 
