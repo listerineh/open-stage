@@ -43,7 +43,12 @@ CREATE INDEX IF NOT EXISTS idx_clips_band_id ON clips(band_id);
 -- Enable RLS
 ALTER TABLE clips ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies for clips
+-- RLS Policies for clips (drop first to make idempotent)
+DROP POLICY IF EXISTS "Users can view clips from their bands" ON clips;
+DROP POLICY IF EXISTS "Editors can create clips" ON clips;
+DROP POLICY IF EXISTS "Users can update own clips or admin" ON clips;
+DROP POLICY IF EXISTS "Users can delete own clips or admin" ON clips;
+
 -- Users can view clips from bands they belong to
 CREATE POLICY "Users can view clips from their bands"
   ON clips FOR SELECT
@@ -93,7 +98,8 @@ CREATE POLICY "Users can delete own clips or admin"
     )
   );
 
--- Trigger for updated_at
+-- Trigger for updated_at (drop first to make idempotent)
+DROP TRIGGER IF EXISTS update_clips_updated_at ON clips;
 CREATE TRIGGER update_clips_updated_at
   BEFORE UPDATE ON clips
   FOR EACH ROW
