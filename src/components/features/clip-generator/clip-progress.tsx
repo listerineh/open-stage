@@ -125,7 +125,7 @@ export function ClipProgressList({
                 </span>
                 {clip && (
                   <span className="text-xs text-zinc-500">
-                    {formatTimestamp(clip.timestamp)} • {clip.duration}s
+                    {formatTimestamp(clip.startTime)} • {clip.duration}s
                   </span>
                 )}
               </div>

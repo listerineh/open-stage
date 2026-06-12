@@ -28,7 +28,8 @@ export interface ClipResult {
   url: string;
   duration: number;
   format: ClipFormat;
-  timestamp: number;
+  timestamp: number; // Timestamp del momento detectado
+  startTime: number; // Tiempo real de inicio del clip en el video
   videoName: string;
 }
 

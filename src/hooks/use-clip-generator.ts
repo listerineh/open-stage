@@ -114,6 +114,7 @@ export function useClipGenerator() {
                 duration: config.duration,
                 format: config.format,
                 timestamp: config.moment.timestamp,
+                startTime: config.startTime,
                 videoName,
               };
 
