@@ -25,19 +25,24 @@ export function AudioMomentsMobileV2({
   const [category, setCategory] = useState<Category>('all');
   const [playing, setPlaying] = useState<number | null>(null);
   const [loading, setLoading] = useState<number | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const mediaRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     return () => {
-      audioRef.current?.pause();
+      if (mediaRef.current) {
+        mediaRef.current.pause();
+        mediaRef.current.src = '';
+      }
     };
   }, []);
 
   const play = async (m: AudioMoment, i: number) => {
-    // Pausar audio anterior
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
+    // Pausar y limpiar audio anterior completamente
+    if (mediaRef.current) {
+      mediaRef.current.pause();
+      mediaRef.current.src = '';
+      mediaRef.current.load();
+      mediaRef.current = null;
     }
 
     // Si ya estaba reproduciendo este, solo pausar
@@ -54,54 +59,52 @@ export function AudioMomentsMobileV2({
         return;
       }
 
-      const audio = new Audio();
-      // Usar el timestamp del momento como cache buster para forzar nuevo request
-      audio.src = `/api/download-video?fileId=${match[1]}&seek=${Math.floor(m.timestamp)}`;
-      audio.preload = 'metadata';
-      audioRef.current = audio;
+      // Usar video element (mejor soporte para seeking que audio)
+      const media = document.createElement('video');
+      media.src = `/api/download-video?fileId=${match[1]}`;
+      media.preload = 'auto';
+      mediaRef.current = media;
 
-      // Calcular el tiempo de inicio deseado
+      // Tiempo de inicio deseado
       const startTime = Math.max(0, m.timestamp - 1.5);
 
-      // Esperar a que cargue suficiente para hacer seek
+      // Esperar a que tenga suficientes datos para seek
       await new Promise<void>((resolve, reject) => {
-        const onCanPlay = () => {
-          audio.removeEventListener('canplay', onCanPlay);
+        const timeout = setTimeout(() => reject(new Error('Timeout')), 10000);
+
+        media.onloadedmetadata = () => {
+          clearTimeout(timeout);
+          // Hacer seek inmediatamente después de metadata
+          media.currentTime = startTime;
+        };
+
+        media.onseeked = () => {
           resolve();
         };
-        audio.addEventListener('canplay', onCanPlay);
-        audio.onerror = () => reject(new Error('Error loading audio'));
-        audio.load();
-      });
 
-      // Establecer tiempo ANTES de reproducir
-      audio.currentTime = startTime;
-
-      // Esperar a que el seek se complete
-      await new Promise<void>(resolve => {
-        const onSeeked = () => {
-          audio.removeEventListener('seeked', onSeeked);
-          resolve();
+        media.onerror = () => {
+          clearTimeout(timeout);
+          reject(new Error('Error loading'));
         };
-        audio.addEventListener('seeked', onSeeked);
-        // Fallback si seeked no dispara
-        setTimeout(resolve, 100);
+
+        media.load();
       });
 
-      await audio.play();
+      await media.play();
       setLoading(null);
       setPlaying(i);
 
       // Parar después de 4 segundos
       const timeoutId = setTimeout(() => {
-        if (audioRef.current === audio) {
-          audio.pause();
+        if (mediaRef.current === media) {
+          media.pause();
           setPlaying(null);
         }
       }, 4000);
 
-      audio.onpause = () => clearTimeout(timeoutId);
-    } catch {
+      media.onpause = () => clearTimeout(timeoutId);
+    } catch (err) {
+      console.error('Preview error:', err);
       setLoading(null);
       setPlaying(null);
     }

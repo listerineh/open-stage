@@ -193,21 +193,28 @@ function detectMoments(
     }
   }
 
-  // Sort by timestamp and remove duplicates within 2 seconds
-  const sortedMoments = moments.sort((a, b) => a.timestamp - b.timestamp);
-  const filteredMoments: AudioMoment[] = [];
+  // Ordenar por confianza (mejores primero) para seleccionar los más relevantes
+  const sortedByConfidence = moments.sort((a, b) => b.confidence - a.confidence);
 
-  for (const moment of sortedMoments) {
-    const isDuplicate = filteredMoments.some(
-      m => Math.abs(m.timestamp - moment.timestamp) < 2 && m.type === moment.type
+  // Distancia mínima entre momentos: 15 segundos
+  // Esto evita que los clips se superpongan (un clip típico dura 15-60s)
+  const MIN_DISTANCE_SECONDS = 15;
+
+  const selectedMoments: AudioMoment[] = [];
+
+  for (const moment of sortedByConfidence) {
+    // Verificar que no esté muy cerca de un momento ya seleccionado
+    const tooClose = selectedMoments.some(
+      m => Math.abs(m.timestamp - moment.timestamp) < MIN_DISTANCE_SECONDS
     );
-    if (!isDuplicate) {
-      filteredMoments.push(moment);
+
+    if (!tooClose) {
+      selectedMoments.push(moment);
     }
   }
 
-  // Ordenar por timestamp (sin límite artificial)
-  return filteredMoments.sort((a, b) => a.timestamp - b.timestamp);
+  // Ordenar por timestamp para mostrar cronológicamente
+  return selectedMoments.sort((a, b) => a.timestamp - b.timestamp);
 }
 
 /**
