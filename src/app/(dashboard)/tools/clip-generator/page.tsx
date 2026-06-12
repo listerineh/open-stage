@@ -137,9 +137,8 @@ export default function ClipGeneratorPage() {
   } = wizardState;
 
   // Filtrar momentos basados en las intenciones seleccionadas
-  const allowedMomentTypes = selectedIntents.flatMap(
-    intent => INTENT_TO_MOMENT_TYPES[intent] || []
-  );
+  const intentsArray = selectedIntents || [];
+  const allowedMomentTypes = intentsArray.flatMap(intent => INTENT_TO_MOMENT_TYPES[intent] || []);
   const filteredMoments =
     allowedMomentTypes.length > 0
       ? audioMoments.filter(m => allowedMomentTypes.includes(m.type))
@@ -219,7 +218,7 @@ export default function ClipGeneratorPage() {
       updateWizard({ currentStep: 'formats' });
     } else if (currentStep === 'formats' && selectedFormats.length > 0) {
       updateWizard({ currentStep: 'intent' });
-    } else if (currentStep === 'intent' && selectedIntents.length > 0) {
+    } else if (currentStep === 'intent' && intentsArray.length > 0) {
       updateWizard({ currentStep: 'moments' });
     } else if (currentStep === 'moments') {
       updateWizard({ currentStep: 'subtitles' });
@@ -256,7 +255,7 @@ export default function ClipGeneratorPage() {
   const canProceed = () => {
     if (currentStep === 'video') return !!videoInfo;
     if (currentStep === 'formats') return selectedFormats.length > 0;
-    if (currentStep === 'intent') return selectedIntents.length > 0;
+    if (currentStep === 'intent') return intentsArray.length > 0;
     if (currentStep === 'moments') return true;
     if (currentStep === 'subtitles') return true;
     if (currentStep === 'generate') return clipGenerator.clips.length > 0;
@@ -497,16 +496,16 @@ export default function ClipGeneratorPage() {
               </div>
 
               <IntentSelector
-                selectedIntents={selectedIntents}
+                selectedIntents={intentsArray}
                 onSelectionChange={intents => updateWizard({ selectedIntents: intents })}
               />
 
-              {selectedIntents.length > 0 && (
+              {intentsArray.length > 0 && (
                 <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
                   <p className="text-xs text-zinc-500">
                     Se mostrarán momentos de tipo:{' '}
                     <span className="text-zinc-300">
-                      {[...new Set(selectedIntents.flatMap(i => INTENT_TO_MOMENT_TYPES[i] || []))]
+                      {[...new Set(intentsArray.flatMap(i => INTENT_TO_MOMENT_TYPES[i] || []))]
                         .map(t =>
                           t === 'peak' ? 'Picos' : t === 'silence' ? 'Silencios' : 'Transiciones'
                         )
