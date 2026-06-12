@@ -7,23 +7,9 @@ import { Button } from '@/components/ui/button';
 import { useBand } from '@/hooks/use-band';
 import { Users, Plus, ArrowRight, Loader2, Music, Ticket, AlertCircle } from 'lucide-react';
 import { LogoUpload } from '@/components/ui/logo-upload';
+import { GenreSelector, stringifyGenres } from '@/components/ui/genre-selector';
 
 type OnboardingStep = 'choice' | 'create' | 'join';
-
-const GENRES = [
-  'Rock',
-  'Pop',
-  'Metal',
-  'Jazz',
-  'Blues',
-  'Reggae',
-  'Hip Hop',
-  'Electrónica',
-  'Folk',
-  'Indie',
-  'Punk',
-  'Otro',
-];
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -35,7 +21,7 @@ export default function OnboardingPage() {
 
   // Create band form
   const [bandName, setBandName] = useState('');
-  const [bandGenre, setBandGenre] = useState('');
+  const [bandGenres, setBandGenres] = useState<string[]>([]);
   const [bandDescription, setBandDescription] = useState('');
   const [bandLogoUrl, setBandLogoUrl] = useState<string | null>(null);
 
@@ -49,11 +35,12 @@ export default function OnboardingPage() {
 
     try {
       const slug = generateSlug(bandName);
+      const genreString = stringifyGenres(bandGenres) || undefined;
       await createBand(
         bandName,
         slug,
         bandDescription || undefined,
-        bandGenre || undefined,
+        genreString,
         bandLogoUrl || undefined
       );
       router.push('/dashboard');
@@ -179,22 +166,10 @@ export default function OnboardingPage() {
 
                   {/* Genre */}
                   <div className="space-y-2">
-                    <label htmlFor="bandGenre" className="block text-sm font-medium text-zinc-400">
-                      Género musical
+                    <label className="block text-sm font-medium text-zinc-400">
+                      Géneros musicales
                     </label>
-                    <select
-                      id="bandGenre"
-                      value={bandGenre}
-                      onChange={e => setBandGenre(e.target.value)}
-                      className="block w-full rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-3 text-white transition-all focus:border-violet-500/50 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
-                    >
-                      <option value="">Selecciona un género</option>
-                      {GENRES.map(genre => (
-                        <option key={genre} value={genre}>
-                          {genre}
-                        </option>
-                      ))}
-                    </select>
+                    <GenreSelector value={bandGenres} onChange={setBandGenres} />
                   </div>
 
                   {/* Description */}
