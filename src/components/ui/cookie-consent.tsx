@@ -53,17 +53,24 @@ export function CookieConsent() {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-50">
-      <div className="border-t border-zinc-800 bg-zinc-950/95 backdrop-blur-xl">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+      <div className="border-t border-violet-500/20 bg-gradient-to-r from-zinc-950/98 via-violet-950/20 to-zinc-950/98 shadow-[0_-4px_20px_rgba(139,92,246,0.15)] backdrop-blur-xl">
+        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
           {!showSettings ? (
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3 sm:gap-4">
-                <Cookie className="hidden h-5 w-5 shrink-0 text-violet-400 sm:block" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-500/10 ring-1 ring-violet-500/20">
+                  <Cookie className="h-5 w-5 text-violet-400" />
+                </div>
                 <div className="flex-1">
-                  <p className="text-sm text-zinc-300">
-                    Usamos cookies para mejorar tu experiencia.{' '}
-                    <Link href="/cookies" className="text-violet-400 hover:text-violet-300">
-                      Más info
+                  <p className="text-sm font-medium text-white">
+                    🍪 Usamos cookies para mejorar tu experiencia
+                  </p>
+                  <p className="mt-0.5 text-xs text-zinc-400">
+                    <Link
+                      href="/cookies"
+                      className="text-violet-400 hover:text-violet-300 underline"
+                    >
+                      Más información
                     </Link>
                   </p>
                 </div>
@@ -72,7 +79,7 @@ export function CookieConsent() {
               <div className="flex items-center gap-2 sm:gap-3">
                 <button
                   onClick={() => setShowSettings(true)}
-                  className="text-sm text-zinc-500 transition-colors hover:text-white"
+                  className="text-sm font-medium text-zinc-400 transition-colors hover:text-violet-400"
                 >
                   Configurar
                 </button>
@@ -80,16 +87,16 @@ export function CookieConsent() {
                   variant="outline"
                   size="sm"
                   onClick={handleRejectAll}
-                  className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                  className="border-zinc-700 text-zinc-300 hover:border-zinc-600 hover:bg-zinc-800"
                 >
                   Rechazar
                 </Button>
                 <Button
                   size="sm"
                   onClick={handleAcceptAll}
-                  className="bg-violet-600 hover:bg-violet-500"
+                  className="bg-violet-600 font-medium shadow-lg shadow-violet-500/20 hover:bg-violet-500"
                 >
-                  Aceptar
+                  ✓ Aceptar
                 </Button>
               </div>
             </div>
