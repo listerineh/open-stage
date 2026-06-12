@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Zap, Volume2, TrendingUp, CheckCircle2, Play, Pause, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { Zap, Volume2, TrendingUp, CheckCircle2 } from 'lucide-react';
 import { type AudioMoment, formatTimestamp, getMomentDescription } from '@/lib/audio';
 import { cn } from '@/lib/utils';
 
@@ -9,7 +9,7 @@ interface Props {
   moments: AudioMoment[];
   selectedMoments: number[];
   onToggleMoment: (index: number) => void;
-  videoUrl: string;
+  videoUrl?: string;
   duration: number;
 }
 
@@ -19,99 +19,9 @@ export function AudioMomentsMobileV2({
   moments,
   selectedMoments,
   onToggleMoment,
-  videoUrl,
   duration,
 }: Props) {
   const [category, setCategory] = useState<Category>('all');
-  const [playing, setPlaying] = useState<number | null>(null);
-  const [loading, setLoading] = useState<number | null>(null);
-  const mediaRef = useRef<HTMLVideoElement | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (mediaRef.current) {
-        mediaRef.current.pause();
-        mediaRef.current.src = '';
-      }
-    };
-  }, []);
-
-  const play = async (m: AudioMoment, i: number) => {
-    // Pausar audio anterior
-    if (mediaRef.current) {
-      mediaRef.current.pause();
-      mediaRef.current = null;
-    }
-
-    // Si ya estaba reproduciendo este, solo pausar
-    if (playing === i) {
-      setPlaying(null);
-      return;
-    }
-
-    try {
-      setLoading(i);
-      const match = videoUrl.match(/\/d\/([^/]+)/);
-      if (!match) {
-        setLoading(null);
-        return;
-      }
-
-      const media = document.createElement('video');
-      media.src = `/api/download-video?fileId=${match[1]}`;
-      mediaRef.current = media;
-
-      // Tiempo de inicio deseado
-      const startTime = Math.max(0, m.timestamp - 1.5);
-      console.log(`[Preview] Momento ${i}: timestamp=${m.timestamp}, startTime=${startTime}`);
-
-      // Esperar a que cargue metadata
-      await new Promise<void>((resolve, reject) => {
-        media.onloadedmetadata = () => {
-          console.log(`[Preview] Metadata loaded, duration=${media.duration}`);
-          resolve();
-        };
-        media.onerror = () => reject(new Error('Error loading'));
-        media.load();
-      });
-
-      // Hacer seek
-      media.currentTime = startTime;
-      console.log(`[Preview] Set currentTime to ${startTime}`);
-
-      // Esperar a que el seek se complete
-      await new Promise<void>(resolve => {
-        media.onseeked = () => {
-          console.log(`[Preview] Seeked to ${media.currentTime}`);
-          resolve();
-        };
-        // Fallback
-        setTimeout(() => {
-          console.log(`[Preview] Fallback, currentTime=${media.currentTime}`);
-          resolve();
-        }, 500);
-      });
-
-      await media.play();
-      console.log(`[Preview] Playing from ${media.currentTime}`);
-      setLoading(null);
-      setPlaying(i);
-
-      // Parar después de 4 segundos
-      const timeoutId = setTimeout(() => {
-        if (mediaRef.current === media) {
-          media.pause();
-          setPlaying(null);
-        }
-      }, 4000);
-
-      media.onpause = () => clearTimeout(timeoutId);
-    } catch (err) {
-      console.error('Preview error:', err);
-      setLoading(null);
-      setPlaying(null);
-    }
-  };
 
   const filtered = category === 'all' ? moments : moments.filter(m => m.type === category);
 
@@ -201,7 +111,7 @@ export function AudioMomentsMobileV2({
 
       {/* Info */}
       <div className="flex items-center gap-1.5 text-[10px] text-zinc-400">
-        <span>▶ Preview 4s • Selecciona los momentos para generar clips</span>
+        <span>Selecciona los momentos para generar clips</span>
       </div>
 
       {/* List */}
@@ -239,35 +149,16 @@ export function AudioMomentsMobileV2({
                 </span>
               </div>
 
-              {/* Actions */}
-              <div className="flex shrink-0 gap-2">
-                <button
-                  onClick={() => play(m, i)}
-                  className={cn(
-                    'flex h-10 w-10 items-center justify-center rounded-lg transition-colors active:scale-95',
-                    playing === i || loading === i
-                      ? 'bg-violet-500/20 text-violet-400'
-                      : 'bg-zinc-800 text-zinc-400'
-                  )}
-                >
-                  {loading === i ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : playing === i ? (
-                    <Pause className="h-5 w-5" />
-                  ) : (
-                    <Play className="h-5 w-5" />
-                  )}
-                </button>
-                <button
-                  onClick={() => onToggleMoment(i)}
-                  className={cn(
-                    'flex h-10 w-10 items-center justify-center rounded-lg transition-colors active:scale-95',
-                    sel ? 'bg-violet-500/20 text-violet-400' : 'bg-zinc-800 text-zinc-400'
-                  )}
-                >
-                  <CheckCircle2 className="h-5 w-5" />
-                </button>
-              </div>
+              {/* Action - Solo seleccionar */}
+              <button
+                onClick={() => onToggleMoment(i)}
+                className={cn(
+                  'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors active:scale-95',
+                  sel ? 'bg-violet-500/20 text-violet-400' : 'bg-zinc-800 text-zinc-400'
+                )}
+              >
+                <CheckCircle2 className="h-5 w-5" />
+              </button>
             </div>
           );
         })}
