@@ -507,7 +507,7 @@ export default function ClipGeneratorPage() {
                 <AudioMomentsMobileV2
                   moments={filteredMoments}
                   selectedMoments={selectedMomentIndices}
-                  videoUrl={videoUrl || ''}
+                  audioUrl={audioResult?.audioUrl}
                   duration={audioDuration || audioResult?.duration || 0}
                   onToggleMoment={(index: number) => {
                     const newSelected = selectedMomentIndices.includes(index)

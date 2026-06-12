@@ -16,6 +16,7 @@ export interface AudioAnalysisResult {
   averageEnergy: number;
   peakEnergy: number;
   duration: number;
+  audioUrl: string; // Blob URL para preview
 }
 
 interface AnalysisOptions {
@@ -82,11 +83,16 @@ export async function analyzeAudio(
     const averageEnergy = energyData.reduce((a, b) => a + b, 0) / energyData.length;
     const peakEnergy = Math.max(...energyData);
 
+    // Crear blob URL del video para preview de audio
+    const blob = new Blob([arrayBuffer], { type: 'video/mp4' });
+    const audioUrl = URL.createObjectURL(blob);
+
     return {
       moments,
       averageEnergy,
       peakEnergy,
       duration,
+      audioUrl,
     };
   } catch (error) {
     console.error('Audio analysis failed:', error);
