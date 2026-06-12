@@ -39,6 +39,9 @@ OpenStage es una plataforma all-in-one diseñada para bandas y músicos que quie
 - **Procesamiento en el navegador** - FFmpeg WASM, sin servidores externos
 - **Soporte Google Drive** - Descarga videos directamente desde enlaces públicos
 - **Múltiples formatos** - TikTok (9:16), Instagram Reels, YouTube Shorts, Posts (1:1), YouTube (16:9)
+- **Análisis de audio inteligente** - Detección automática de momentos con Web Audio API
+- **Timeline visual** - Categorías (picos, silencios, transiciones) con top 5 sugerencias
+- **Transcripción con Whisper** - Transcripción local con timestamps en español
 - **Procesamiento rápido** - Clips de 30 segundos generados en minutos
 - **Descarga directa** - Clips listos para publicar, individual o masiva
 - **Wizard intuitivo** - Flujo paso a paso para configurar formato, intención y subtítulos
@@ -50,6 +53,20 @@ OpenStage es una plataforma all-in-one diseñada para bandas y músicos que quie
 - **Códigos de invitación** - Invita miembros con códigos únicos
 - **Selector de banda activa** - Cambia entre bandas desde el header
 - **Logos personalizados** - Upload de logos hasta 50MB
+- **Géneros multi-select** - Hasta 5 géneros por banda con chips
+
+### 🎓 Tours Guiados
+
+- **Shepherd.js integrado** - Tours interactivos para dashboard, bandas y clip generator
+- **Persistencia en Supabase** - Los tours completados se guardan por usuario
+- **Reinicio manual** - Botón en settings para volver a ver los tutoriales
+
+### 🍪 Privacidad y Cookies
+
+- **Políticas legales** - Páginas de Política de Privacidad y Cookies
+- **Banner GDPR** - Consentimiento explícito con opciones de aceptar/rechazar/configurar
+- **Gestión de preferencias** - Control granular de cookies en settings
+- **Persistencia dual** - Supabase para usuarios logueados + localStorage como fallback
 
 ## 🚀 Inicio Rápido
 
@@ -87,24 +104,34 @@ src/
 │   │   ├── bands/         # Gestión de bandas (/bands, /bands/[slug])
 │   │   ├── dashboard/     # Dashboard principal
 │   │   ├── onboarding/    # Onboarding post-registro
+│   │   ├── settings/      # Configuración de usuario
 │   │   └── tools/         # Herramientas (clip-generator)
+│   ├── (legal)/           # Páginas legales (privacy, cookies)
 │   └── api/               # API Routes
 ├── components/
 │   ├── ui/                # Componentes base (shadcn/ui + custom)
-│   ├── layout/            # Header, BandSelector, etc.
+│   ├── layout/            # Sidebar, Header, etc.
 │   └── features/          # Componentes por feature
+│       ├── audio-moments/ # Análisis de audio y timeline
+│       ├── tours/         # Tours guiados con Shepherd.js
+│       └── transcription/ # Transcripción con Whisper
 ├── contexts/              # React Contexts (Auth, Band)
-├── hooks/                 # Custom hooks (useAuth, useBand)
+├── hooks/                 # Custom hooks (useAuth, useBand, useTranscription)
 ├── lib/
+│   ├── audio/             # Análisis de audio con Web Audio API
+│   ├── clip-generator/    # Generación de clips con FFmpeg
+│   ├── cookies/           # Gestión de preferencias de cookies
 │   ├── supabase/          # Cliente, middleware, tipos
-│   ├── video/             # Procesamiento FFmpeg WASM
+│   ├── tour/              # Sistema de tours guiados
+│   ├── transcription/     # Whisper WASM y extracción de audio
 │   └── constants/         # Formatos, rutas, estilos
 ├── stores/                # Zustand stores
 └── types/                 # TypeScript types
 supabase/
 └── migrations/            # Migraciones SQL
 public/
-└── ffmpeg/                # FFmpeg WASM core files
+├── ffmpeg/                # FFmpeg WASM core files
+└── models/                # Modelos Whisper WASM
 ```
 
 ## 🛠️ Scripts Disponibles
