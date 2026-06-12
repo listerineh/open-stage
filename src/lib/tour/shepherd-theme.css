@@ -175,7 +175,8 @@ body.shepherd-active .shepherd-modal-overlay-container {
   display: flex;
   gap: 0.25rem;
   justify-content: center;
-  padding: 0 1rem 0.75rem;
+  margin-top: 1rem;
+  padding: 0 1rem 0.5rem;
 }
 
 .shepherd-progress-dot {
