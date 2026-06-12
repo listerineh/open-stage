@@ -9,43 +9,21 @@ export const CLIP_GENERATOR_TOUR: TourStep[] = [
   {
     id: 'video-url',
     title: 'Paso 1: Pega tu video',
-    text: 'Primero, pega el enlace de Google Drive de tu video. Asegúrate de que el video sea público o tenga permisos de acceso.',
+    text: 'Primero, pega el enlace de Google Drive de tu video. Asegúrate de que el video tenga permisos de acceso.',
     attachTo: {
       element: '[data-tour="video-input"]',
       on: 'bottom',
     },
   },
   {
-    id: 'intents',
-    title: 'Paso 2: Elige tus intenciones',
-    text: 'Selecciona qué tipo de contenido quieres crear: clips virales, mejores momentos, momentos divertidos, etc.',
-    attachTo: {
-      element: '[data-tour="intent-selector"]',
-      on: 'bottom',
-    },
-  },
-  {
-    id: 'moments',
-    title: 'Paso 3: Momentos detectados',
-    text: 'Analizaremos el audio de tu video y te sugeriremos los mejores momentos. Puedes escuchar una preview y seleccionar los que más te gusten.',
-    attachTo: {
-      element: '[data-tour="moments-section"]',
-      on: 'top',
-    },
-  },
-  {
-    id: 'formats',
-    title: 'Paso 4: Formatos de salida',
-    text: 'Elige los formatos en los que quieres exportar tus clips: vertical para TikTok/Reels, cuadrado para Instagram, etc.',
-    attachTo: {
-      element: '[data-tour="format-selector"]',
-      on: 'bottom',
-    },
+    id: 'workflow',
+    title: 'Flujo de trabajo',
+    text: 'Después de verificar el video, seguirás estos pasos: elegir formatos (TikTok, Reels, etc.), seleccionar tipo de contenido, revisar momentos detectados y configurar subtítulos.',
   },
   {
     id: 'generate',
-    title: '¡Listo para generar!',
-    text: 'Una vez configurado todo, haz clic en "Generar clips" y nosotros nos encargamos del resto. ¡Así de fácil!',
+    title: '¡Y listo!',
+    text: 'Al final, generaremos tus clips automáticamente. Podrás descargarlos o subirlos directamente a Google Drive. ¡Así de fácil!',
   },
 ];
 

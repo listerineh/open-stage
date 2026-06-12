@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, startTransition } from 'react';
 import { VideoUrlInput } from '@/components/features/video-upload';
+import { ClipGeneratorTour } from '@/components/features/tours/clip-generator-tour';
 import {
   FormatSelector,
   IntentSelector,
@@ -320,6 +321,7 @@ export default function ClipGeneratorPage() {
 
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-6 pt-20 sm:px-6 sm:py-10 md:px-8 lg:px-12 lg:pt-10">
+      <ClipGeneratorTour />
       <div className="w-full space-y-8">
         {/* Header */}
         <div className="space-y-4">
@@ -452,7 +454,7 @@ export default function ClipGeneratorPage() {
               </div>
 
               {!videoInfo ? (
-                <div className="space-y-4">
+                <div className="space-y-4" data-tour="video-input">
                   <VideoUrlInput onUrlSubmit={handleUrlSubmit} disabled={isVerifying} />
 
                   {isVerifying && (
@@ -495,7 +497,7 @@ export default function ClipGeneratorPage() {
           )}
 
           {currentStep === 'moments' && (
-            <div className="w-full space-y-6 overflow-x-hidden">
+            <div className="w-full space-y-6 overflow-x-hidden" data-tour="moments-section">
               <div>
                 <h2 className="text-lg font-medium text-white">Momentos detectados</h2>
                 <p className="mt-1 text-sm text-zinc-500">
@@ -600,10 +602,12 @@ export default function ClipGeneratorPage() {
                 </p>
               </div>
 
-              <FormatSelector
-                selectedFormats={selectedFormats}
-                onSelectionChange={formats => updateWizard({ selectedFormats: formats })}
-              />
+              <div data-tour="format-selector">
+                <FormatSelector
+                  selectedFormats={selectedFormats}
+                  onSelectionChange={formats => updateWizard({ selectedFormats: formats })}
+                />
+              </div>
             </div>
           )}
 
@@ -616,10 +620,12 @@ export default function ClipGeneratorPage() {
                 </p>
               </div>
 
-              <IntentSelector
-                selectedIntents={intentsArray}
-                onSelectionChange={intents => updateWizard({ selectedIntents: intents })}
-              />
+              <div data-tour="intent-selector">
+                <IntentSelector
+                  selectedIntents={intentsArray}
+                  onSelectionChange={intents => updateWizard({ selectedIntents: intents })}
+                />
+              </div>
 
               {intentsArray.length > 0 && (
                 <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
