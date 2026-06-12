@@ -109,31 +109,32 @@ async function generateSingleClip(
   let targetHeight: number;
   let videoFilter: string;
 
+  // Estrategia: SIEMPRE hacer crop al centro para llenar el frame
+  // Sin franjas negras - el video siempre llena el formato completo
+  // En el futuro: opción de elegir crop vs pad, y AI tracking para videos horizontales
+
   if (format.aspectRatio === '16:9') {
     // YouTube horizontal
     targetWidth = Math.min(format.width, 1280);
     targetHeight = Math.min(format.height, 720);
-    // Usar scale con aspect ratio forzado y padding si es necesario
-    // Esto funciona tanto con videos verticales como horizontales
-    videoFilter = `scale=${targetWidth}:${targetHeight}:force_original_aspect_ratio=decrease,pad=${targetWidth}:${targetHeight}:(ow-iw)/2:(oh-ih)/2:black`;
+    // Crop al centro: primero escalar para que el lado menor llene, luego crop
+    videoFilter = `scale=${targetWidth}:${targetHeight}:force_original_aspect_ratio=increase,crop=${targetWidth}:${targetHeight}`;
   } else if (format.aspectRatio === '1:1') {
     // Cuadrado
     targetWidth = Math.min(format.width, 720);
     targetHeight = Math.min(format.height, 720);
-    // Scale y pad para cuadrado
-    videoFilter = `scale=${targetWidth}:${targetHeight}:force_original_aspect_ratio=decrease,pad=${targetWidth}:${targetHeight}:(ow-iw)/2:(oh-ih)/2:black`;
+    videoFilter = `scale=${targetWidth}:${targetHeight}:force_original_aspect_ratio=increase,crop=${targetWidth}:${targetHeight}`;
   } else if (format.aspectRatio === '4:5') {
     // Instagram portrait
     targetWidth = Math.min(format.width, 720);
     targetHeight = Math.min(format.height, 900);
-    // Scale y pad para 4:5
-    videoFilter = `scale=${targetWidth}:${targetHeight}:force_original_aspect_ratio=decrease,pad=${targetWidth}:${targetHeight}:(ow-iw)/2:(oh-ih)/2:black`;
+    videoFilter = `scale=${targetWidth}:${targetHeight}:force_original_aspect_ratio=increase,crop=${targetWidth}:${targetHeight}`;
   } else {
     // 9:16 vertical (TikTok, Reels, Shorts, Story)
     targetWidth = Math.min(format.width, 720);
     targetHeight = Math.min(format.height, 1280);
-    // Scale y pad para vertical
-    videoFilter = `scale=${targetWidth}:${targetHeight}:force_original_aspect_ratio=decrease,pad=${targetWidth}:${targetHeight}:(ow-iw)/2:(oh-ih)/2:black`;
+    // Para vertical: crop al centro del video (horizontal o vertical)
+    videoFilter = `scale=${targetWidth}:${targetHeight}:force_original_aspect_ratio=increase,crop=${targetWidth}:${targetHeight}`;
   }
 
   // -ss después de -i para corte preciso (más lento pero exacto)

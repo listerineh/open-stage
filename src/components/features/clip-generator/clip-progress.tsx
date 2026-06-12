@@ -156,41 +156,20 @@ export function ClipProgressList({
               </div>
             )}
 
-            {/* Video preview - Mobile first responsive */}
+            {/* Video preview - Layout consistente */}
             {isComplete && clip && (
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                {/* Video container - Aspect ratio dinámico según formato */}
-                <div
-                  className={cn(
-                    'relative mx-auto overflow-hidden rounded-xl bg-black sm:mx-0 sm:shrink-0',
-                    clip.format.aspectRatio === '16:9'
-                      ? 'w-full max-w-80 sm:w-56 md:w-64'
-                      : clip.format.aspectRatio === '1:1'
-                        ? 'w-full max-w-48 sm:w-32 md:w-40'
-                        : 'w-full max-w-70 sm:w-40 md:w-48'
-                  )}
-                >
-                  <div
-                    className={cn(
-                      clip.format.aspectRatio === '16:9'
-                        ? 'aspect-video'
-                        : clip.format.aspectRatio === '1:1'
-                          ? 'aspect-square'
-                          : clip.format.aspectRatio === '4:5'
-                            ? 'aspect-4/5'
-                            : 'aspect-9/16'
-                    )}
-                  >
-                    <video
-                      ref={el => {
-                        if (el) videoRefs.current.set(clip.id, el);
-                      }}
-                      src={clip.url}
-                      className="h-full w-full object-contain"
-                      onEnded={() => setPlayingId(null)}
-                      playsInline
-                    />
-                  </div>
+              <div className="flex flex-col gap-3">
+                {/* Video container - Altura fija, aspect ratio interno */}
+                <div className="relative mx-auto h-48 w-full overflow-hidden rounded-xl bg-black sm:h-56">
+                  <video
+                    ref={el => {
+                      if (el) videoRefs.current.set(clip.id, el);
+                    }}
+                    src={clip.url}
+                    className="h-full w-full object-contain"
+                    onEnded={() => setPlayingId(null)}
+                    playsInline
+                  />
                   <button
                     onClick={() => togglePlay(clip.id)}
                     className={cn(
@@ -199,19 +178,19 @@ export function ClipProgressList({
                     )}
                   >
                     {playingId === clip.id ? (
-                      <Pause className="h-10 w-10 text-white drop-shadow-lg sm:h-8 sm:w-8" />
+                      <Pause className="h-12 w-12 text-white drop-shadow-lg" />
                     ) : (
-                      <Play className="h-10 w-10 text-white drop-shadow-lg sm:h-8 sm:w-8" />
+                      <Play className="h-12 w-12 text-white drop-shadow-lg" />
                     )}
                   </button>
                 </div>
 
-                {/* Actions - Centrado vertical en desktop */}
-                <div className="flex flex-1 flex-col justify-center gap-2">
+                {/* Actions - Siempre debajo del video, horizontal */}
+                <div className="flex gap-2">
                   {/* Descargar */}
                   <button
                     onClick={() => onDownload(clip)}
-                    className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-violet-500/20 px-4 py-2.5 text-sm font-medium text-violet-400 transition-colors hover:bg-violet-500/30 active:scale-[0.98]"
+                    className="flex flex-1 min-h-11 items-center justify-center gap-2 rounded-lg bg-violet-500/20 px-4 py-2.5 text-sm font-medium text-violet-400 transition-colors hover:bg-violet-500/30 active:scale-[0.98]"
                   >
                     <Download className="h-4 w-4" />
                     <span>Descargar</span>
@@ -223,7 +202,7 @@ export function ClipProgressList({
                       onClick={() => handleSaveToDrive(clip)}
                       disabled={savingToDrive === clip.id || savedToDrive.has(clip.id)}
                       className={cn(
-                        'flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors active:scale-[0.98]',
+                        'flex flex-1 min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors active:scale-[0.98]',
                         savedToDrive.has(clip.id)
                           ? 'bg-emerald-500/20 text-emerald-400'
                           : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
@@ -236,14 +215,14 @@ export function ClipProgressList({
                       ) : (
                         <Cloud className="h-4 w-4" />
                       )}
-                      <span>
-                        {savedToDrive.has(clip.id) ? 'Guardado en Drive' : 'Guardar en Drive'}
+                      <span className="hidden sm:inline">
+                        {savedToDrive.has(clip.id) ? 'Guardado' : 'Drive'}
                       </span>
                     </button>
                   ) : onConnectDrive ? (
                     <button
                       onClick={onConnectDrive}
-                      className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-zinc-800 px-4 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-300 active:scale-[0.98]"
+                      className="flex flex-1 min-h-11 items-center justify-center gap-2 rounded-lg bg-zinc-800 px-4 py-2.5 text-sm font-medium text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-zinc-300 active:scale-[0.98]"
                     >
                       <CloudOff className="h-4 w-4" />
                       <span>Conectar Drive</span>
