@@ -14,6 +14,7 @@ export interface OutputFormat {
   name: string;
   platform: string;
   aspectRatio: '9:16' | '16:9' | '1:1' | '4:5';
+  idealDuration: number; // Duración ideal para clips en este formato
   maxDuration: number;
   resolution: { width: number; height: number };
   iconName: 'Music' | 'Camera' | 'Play' | 'Tv' | 'Grid' | 'Circle';
@@ -25,7 +26,8 @@ export const OUTPUT_FORMATS: OutputFormat[] = [
     name: 'TikTok',
     platform: 'TikTok',
     aspectRatio: '9:16',
-    maxDuration: 180,
+    idealDuration: 30, // ~30s ideal para engagement
+    maxDuration: 180, // 3 min
     resolution: { width: 1080, height: 1920 },
     iconName: 'Music',
   },
@@ -34,7 +36,8 @@ export const OUTPUT_FORMATS: OutputFormat[] = [
     name: 'Instagram Reels',
     platform: 'Instagram',
     aspectRatio: '9:16',
-    maxDuration: 90,
+    idealDuration: 30, // ~30s ideal
+    maxDuration: 90, // 1.5 min
     resolution: { width: 1080, height: 1920 },
     iconName: 'Camera',
   },
@@ -43,16 +46,28 @@ export const OUTPUT_FORMATS: OutputFormat[] = [
     name: 'YouTube Shorts',
     platform: 'YouTube',
     aspectRatio: '9:16',
-    maxDuration: 60,
+    idealDuration: 45, // ~45s ideal
+    maxDuration: 60, // 1 min
     resolution: { width: 1080, height: 1920 },
     iconName: 'Play',
+  },
+  {
+    id: 'instagram-story',
+    name: 'Instagram Story',
+    platform: 'Instagram',
+    aspectRatio: '9:16',
+    idealDuration: 15, // 15s (límite de story)
+    maxDuration: 15,
+    resolution: { width: 1080, height: 1920 },
+    iconName: 'Circle',
   },
   {
     id: 'youtube',
     name: 'YouTube',
     platform: 'YouTube',
     aspectRatio: '16:9',
-    maxDuration: 600,
+    idealDuration: 120, // ~2 min ideal para clips
+    maxDuration: 600, // 10 min
     resolution: { width: 1920, height: 1080 },
     iconName: 'Tv',
   },
@@ -61,18 +76,10 @@ export const OUTPUT_FORMATS: OutputFormat[] = [
     name: 'Instagram Feed',
     platform: 'Instagram',
     aspectRatio: '1:1',
-    maxDuration: 60,
+    idealDuration: 30, // ~30s ideal
+    maxDuration: 60, // 1 min
     resolution: { width: 1080, height: 1080 },
     iconName: 'Grid',
-  },
-  {
-    id: 'instagram-story',
-    name: 'Instagram Story',
-    platform: 'Instagram',
-    aspectRatio: '9:16',
-    maxDuration: 15,
-    resolution: { width: 1080, height: 1920 },
-    iconName: 'Circle',
   },
 ];
 

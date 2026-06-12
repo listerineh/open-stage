@@ -13,24 +13,36 @@ export function calculateSmartDuration(
   format: ClipFormat,
   allMoments: AudioMoment[] = []
 ): DurationResult {
-  const config = DURATION_BY_MOMENT_TYPE[moment.type];
-  const maxAllowed = Math.min(config.max, format.maxDuration);
+  const momentConfig = DURATION_BY_MOMENT_TYPE[moment.type];
 
-  let idealDuration = config.ideal;
+  // Usar la duración ideal del formato como base, ajustada por el tipo de momento
+  // El formato define la duración objetivo (ej: TikTok ~30s, Story 15s, YouTube ~2min)
+  const formatIdeal = format.idealDuration;
+  const maxAllowed = format.maxDuration;
 
+  // Calcular duración base: promedio ponderado entre formato y tipo de momento
+  // El formato tiene más peso (70%) porque define la plataforma objetivo
+  let idealDuration = Math.round(formatIdeal * 0.7 + momentConfig.ideal * 0.3);
+
+  // Ajustar según confianza del momento
   if (moment.confidence > 0.8) {
-    idealDuration = Math.min(idealDuration * 1.2, maxAllowed);
+    // Momento muy confiable: puede ser un poco más largo
+    idealDuration = Math.min(idealDuration * 1.15, maxAllowed);
   } else if (moment.confidence < 0.5) {
-    idealDuration = Math.max(idealDuration * 0.8, config.min);
+    // Momento menos confiable: mantenerlo más corto
+    idealDuration = Math.max(idealDuration * 0.85, momentConfig.min);
   }
 
+  // Ajustar según energía
   if (moment.energy > 0.8) {
+    // Alta energía: puede extenderse un poco
     idealDuration = Math.min(idealDuration * 1.1, maxAllowed);
   }
 
+  // Asegurar que esté dentro de los límites
   idealDuration = Math.round(idealDuration);
   idealDuration = Math.min(idealDuration, maxAllowed);
-  idealDuration = Math.max(idealDuration, config.min);
+  idealDuration = Math.max(idealDuration, momentConfig.min);
 
   const halfDuration = idealDuration / 2;
   let startTime = moment.timestamp - halfDuration;

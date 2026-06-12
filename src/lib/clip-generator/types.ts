@@ -1,4 +1,5 @@
 import { type AudioMoment } from '@/lib/audio';
+import { OUTPUT_FORMATS } from '@/lib/constants';
 
 export interface ClipConfig {
   moment: AudioMoment;
@@ -15,6 +16,7 @@ export interface ClipFormat {
   aspectRatio: '9:16' | '16:9' | '1:1' | '4:5';
   width: number;
   height: number;
+  idealDuration: number; // Duración ideal para este formato
   maxDuration: number;
 }
 
@@ -68,42 +70,16 @@ export interface GeneratorState {
   error: string | null;
 }
 
-export const CLIP_FORMATS: ClipFormat[] = [
-  { id: 'tiktok', name: 'TikTok', aspectRatio: '9:16', width: 1080, height: 1920, maxDuration: 60 },
-  {
-    id: 'reels',
-    name: 'Instagram Reels',
-    aspectRatio: '9:16',
-    width: 1080,
-    height: 1920,
-    maxDuration: 90,
-  },
-  {
-    id: 'shorts',
-    name: 'YouTube Shorts',
-    aspectRatio: '9:16',
-    width: 1080,
-    height: 1920,
-    maxDuration: 60,
-  },
-  {
-    id: 'youtube',
-    name: 'YouTube',
-    aspectRatio: '16:9',
-    width: 1920,
-    height: 1080,
-    maxDuration: 600,
-  },
-  { id: 'square', name: 'Square', aspectRatio: '1:1', width: 1080, height: 1080, maxDuration: 60 },
-  {
-    id: 'instagram',
-    name: 'Instagram Post',
-    aspectRatio: '4:5',
-    width: 1080,
-    height: 1350,
-    maxDuration: 60,
-  },
-];
+// Derivar CLIP_FORMATS de OUTPUT_FORMATS para mantener sincronizados
+export const CLIP_FORMATS: ClipFormat[] = OUTPUT_FORMATS.map(f => ({
+  id: f.id,
+  name: f.name,
+  aspectRatio: f.aspectRatio,
+  width: f.resolution.width,
+  height: f.resolution.height,
+  idealDuration: f.idealDuration,
+  maxDuration: f.maxDuration,
+}));
 
 export const DURATION_BY_MOMENT_TYPE: Record<
   AudioMoment['type'],

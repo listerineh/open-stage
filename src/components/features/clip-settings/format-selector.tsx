@@ -88,10 +88,11 @@ interface FormatCardProps {
 
 function FormatCard({ format, isSelected, onClick }: FormatCardProps) {
   const Icon = ICON_MAP[format.iconName];
+  // Mostrar duración ideal, no máxima
   const durationText =
-    format.maxDuration >= 60
-      ? `${Math.floor(format.maxDuration / 60)} min`
-      : `${format.maxDuration} seg`;
+    format.idealDuration >= 60
+      ? `${Math.floor(format.idealDuration / 60)} min`
+      : `${format.idealDuration} seg`;
 
   return (
     <button
