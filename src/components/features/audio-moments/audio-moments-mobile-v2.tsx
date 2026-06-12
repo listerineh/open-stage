@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Zap, Volume2, TrendingUp, CheckCircle2 } from 'lucide-react';
+import { Zap, Volume2, TrendingUp, CheckCircle2, Star } from 'lucide-react';
 import { type AudioMoment, formatTimestamp, getMomentDescription } from '@/lib/audio';
 import { cn } from '@/lib/utils';
 
@@ -24,6 +24,23 @@ export function AudioMomentsMobileV2({
   const [category, setCategory] = useState<Category>('all');
 
   const filtered = category === 'all' ? moments : moments.filter(m => m.type === category);
+
+  // Top 5 momentos por energía (nuestras sugerencias)
+  const top5Indices = moments
+    .map((m, i) => ({ energy: m.energy, index: i }))
+    .sort((a, b) => b.energy - a.energy)
+    .slice(0, 5)
+    .map(x => x.index);
+
+  // Separar top 5 del resto para la lista filtrada
+  const top5Filtered = filtered.filter((_, idx) => {
+    const originalIndex = moments.indexOf(filtered[idx]);
+    return top5Indices.includes(originalIndex);
+  });
+  const restFiltered = filtered.filter((_, idx) => {
+    const originalIndex = moments.indexOf(filtered[idx]);
+    return !top5Indices.includes(originalIndex);
+  });
 
   const icon = (t: string) => (t === 'peak' ? Zap : t === 'silence' ? Volume2 : TrendingUp);
   const color = (t: string, sel: boolean) =>
@@ -109,60 +126,109 @@ export function AudioMomentsMobileV2({
         })}
       </div>
 
-      {/* Info */}
-      <div className="flex items-center gap-1.5 text-[10px] text-zinc-400">
-        <span>Selecciona los momentos para generar clips</span>
-      </div>
+      {/* Top 5 - Nuestras sugerencias */}
+      {top5Filtered.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-1.5 text-[10px] text-amber-400">
+            <Star className="h-3 w-3 fill-amber-400" />
+            <span>Nuestras sugerencias ({top5Filtered.length})</span>
+          </div>
+          {top5Filtered.map(m => {
+            const i = moments.indexOf(m);
+            const Icon = icon(m.type);
+            const sel = selectedMoments.includes(i);
 
-      {/* List */}
-      <div className="flex w-full flex-col gap-2">
-        {filtered.map(m => {
-          const i = moments.indexOf(m);
-          const Icon = icon(m.type);
-          const sel = selectedMoments.includes(i);
-
-          return (
-            <div
-              key={i}
-              className={cn(
-                'flex w-full items-center gap-3 rounded-lg border p-3',
-                sel ? 'border-violet-500/50 bg-violet-500/10' : 'border-zinc-800 bg-zinc-900/30'
-              )}
-            >
-              {/* Icon */}
+            return (
               <div
+                key={`top-${i}`}
                 className={cn(
-                  'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg',
-                  sel ? 'bg-violet-500/20' : 'bg-zinc-800'
+                  'flex w-full items-center gap-3 rounded-lg border p-3',
+                  sel ? 'border-amber-500/50 bg-amber-500/10' : 'border-amber-500/30 bg-amber-500/5'
                 )}
               >
-                <Icon className="h-5 w-5 text-white" />
+                <div
+                  className={cn(
+                    'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg',
+                    sel ? 'bg-amber-500/20' : 'bg-zinc-800'
+                  )}
+                >
+                  <Icon className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden">
+                  <div className="flex items-center gap-1.5">
+                    <span className="truncate text-sm font-medium text-white">
+                      {getMomentDescription(m)}
+                    </span>
+                    <Star className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400" />
+                  </div>
+                  <span className="text-xs text-zinc-500">
+                    {formatTimestamp(m.timestamp)} • {Math.round(m.energy * 100)}% energía
+                  </span>
+                </div>
+                <button
+                  onClick={() => onToggleMoment(i)}
+                  className={cn(
+                    'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors active:scale-95',
+                    sel ? 'bg-amber-500/20 text-amber-400' : 'bg-zinc-800 text-zinc-400'
+                  )}
+                >
+                  <CheckCircle2 className="h-5 w-5" />
+                </button>
               </div>
+            );
+          })}
+        </div>
+      )}
 
-              {/* Info */}
-              <div className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden">
-                <span className="truncate text-sm font-medium text-white">
-                  {getMomentDescription(m)}
-                </span>
-                <span className="text-xs text-zinc-500">
-                  {formatTimestamp(m.timestamp)} • {Math.round(m.energy * 100)}% energía
-                </span>
-              </div>
+      {/* Resto de momentos */}
+      {restFiltered.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-1.5 text-[10px] text-zinc-400">
+            <span>Otros momentos ({restFiltered.length})</span>
+          </div>
+          {restFiltered.map(m => {
+            const i = moments.indexOf(m);
+            const Icon = icon(m.type);
+            const sel = selectedMoments.includes(i);
 
-              {/* Action - Solo seleccionar */}
-              <button
-                onClick={() => onToggleMoment(i)}
+            return (
+              <div
+                key={`rest-${i}`}
                 className={cn(
-                  'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors active:scale-95',
-                  sel ? 'bg-violet-500/20 text-violet-400' : 'bg-zinc-800 text-zinc-400'
+                  'flex w-full items-center gap-3 rounded-lg border p-3',
+                  sel ? 'border-violet-500/50 bg-violet-500/10' : 'border-zinc-800 bg-zinc-900/30'
                 )}
               >
-                <CheckCircle2 className="h-5 w-5" />
-              </button>
-            </div>
-          );
-        })}
-      </div>
+                <div
+                  className={cn(
+                    'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg',
+                    sel ? 'bg-violet-500/20' : 'bg-zinc-800'
+                  )}
+                >
+                  <Icon className="h-5 w-5 text-white" />
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden">
+                  <span className="truncate text-sm font-medium text-white">
+                    {getMomentDescription(m)}
+                  </span>
+                  <span className="text-xs text-zinc-500">
+                    {formatTimestamp(m.timestamp)} • {Math.round(m.energy * 100)}% energía
+                  </span>
+                </div>
+                <button
+                  onClick={() => onToggleMoment(i)}
+                  className={cn(
+                    'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors active:scale-95',
+                    sel ? 'bg-violet-500/20 text-violet-400' : 'bg-zinc-800 text-zinc-400'
+                  )}
+                >
+                  <CheckCircle2 className="h-5 w-5" />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
