@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { TrendingUp, Users, Zap } from 'lucide-react';
 import { Logo } from '@/components/ui/logo';
 import { createClient } from '@/lib/supabase/server';
+import { DashboardTour } from '@/components/features/tours/dashboard-tour';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -20,6 +21,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-6 pt-22 sm:px-6 sm:py-10 md:px-8 lg:px-12 lg:pt-10">
+      <DashboardTour />
+
       {/* Page Header */}
       <div>
         {/* Logo solo en mobile */}
@@ -36,7 +39,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Quick Stats */}
-      <section className="mt-8 sm:mt-10">
+      <section className="mt-8 sm:mt-10" data-tour="stats-section">
         <h2 className="text-xl font-medium text-white sm:text-lg">Resumen</h2>
         <div className="mt-6 grid gap-5 sm:mt-4 sm:grid-cols-3 sm:gap-4">
           <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6">
@@ -76,7 +79,7 @@ export default async function DashboardPage() {
       </section>
 
       {/* Getting Started */}
-      <section className="mt-10">
+      <section className="mt-10" data-tour="getting-started">
         <h2 className="text-lg font-medium text-white">Comienza ahora</h2>
         <div className="mt-4 rounded-xl border border-violet-500/20 bg-violet-500/5 p-6">
           <h3 className="font-medium text-white">¡Crea tu primer clip viral!</h3>

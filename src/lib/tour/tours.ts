@@ -56,21 +56,30 @@ export const DASHBOARD_TOUR: TourStep[] = [
     text: 'Este es tu centro de control. Desde aquí puedes acceder a todas las herramientas para crear contenido increíble para tu banda.',
   },
   {
-    id: 'tools',
-    title: 'Herramientas',
-    text: 'Aquí encontrarás todas las herramientas disponibles: generador de clips, editor de subtítulos, y más por venir.',
+    id: 'stats',
+    title: 'Tu resumen',
+    text: 'Aquí verás las estadísticas de tu banda: clips generados, alcance y seguidores. Por ahora están vacías, ¡pero pronto las llenarás!',
     attachTo: {
-      element: '[data-tour="tools-section"]',
+      element: '[data-tour="stats-section"]',
       on: 'bottom',
     },
   },
   {
-    id: 'band-switcher',
-    title: 'Cambiar de banda',
-    text: 'Si gestionas varias bandas, puedes cambiar entre ellas fácilmente desde el menú lateral.',
+    id: 'getting-started',
+    title: 'Comienza aquí',
+    text: 'Esta sección te guía para crear tu primer clip viral. Haz clic en "Generar clips" para empezar.',
     attachTo: {
-      element: '[data-tour="band-switcher"]',
-      on: 'right',
+      element: '[data-tour="getting-started"]',
+      on: 'top',
+    },
+  },
+  {
+    id: 'sidebar',
+    title: 'Navegación',
+    text: 'Usa el menú lateral para acceder a todas las herramientas, gestionar tus bandas y configurar tu cuenta.',
+    attachTo: {
+      element: '[data-tour="sidebar-toggle"]',
+      on: 'left',
     },
   },
 ];

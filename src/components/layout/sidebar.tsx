@@ -347,6 +347,7 @@ export function Sidebar({ user }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
+        data-tour="sidebar-toggle"
         className={cn(
           'fixed inset-y-0 right-0 z-50 w-64 border-l border-zinc-800 bg-zinc-950 shadow-2xl transition-transform duration-300 ease-in-out lg:left-0 lg:right-auto lg:border-l-0 lg:border-r lg:shadow-none lg:translate-x-0',
           isOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
