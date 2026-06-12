@@ -58,6 +58,7 @@ interface WizardState {
   videoUrl: string | null;
   videoInfo: VideoInfo | null;
   audioMoments: AudioMoment[];
+  audioDuration: number;
   selectedMomentIndices: number[];
   selectedFormats: string[];
   selectedIntents: string[];
@@ -88,6 +89,7 @@ const DEFAULT_WIZARD_STATE: WizardState = {
   videoUrl: null,
   videoInfo: null,
   audioMoments: [],
+  audioDuration: 0,
   selectedMomentIndices: [],
   selectedFormats: [],
   selectedIntents: [],
@@ -159,6 +161,7 @@ export default function ClipGeneratorPage() {
     videoUrl,
     videoInfo,
     audioMoments,
+    audioDuration,
     selectedMomentIndices,
     selectedFormats,
     selectedIntents,
@@ -204,6 +207,7 @@ export default function ClipGeneratorPage() {
 
         updateWizard({
           audioMoments: audioResult.moments,
+          audioDuration: audioResult.duration,
           selectedMomentIndices: topMoments,
         });
       });
@@ -466,7 +470,7 @@ export default function ClipGeneratorPage() {
                   moments={filteredMoments}
                   selectedMoments={selectedMomentIndices}
                   videoUrl={videoUrl || ''}
-                  duration={audioResult?.duration || 0}
+                  duration={audioDuration || audioResult?.duration || 0}
                   onToggleMoment={(index: number) => {
                     const newSelected = selectedMomentIndices.includes(index)
                       ? selectedMomentIndices.filter((i: number) => i !== index)
