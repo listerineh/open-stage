@@ -106,7 +106,7 @@ export function PlatformConnectionCard({
           ) : (
             <button
               onClick={handleConnect}
-              className={`flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${config.borderColor} ${config.color} bg-transparent hover:${config.bgColor}`}
+              className={`flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${config.borderColor} ${config.color} bg-transparent ${config.hoverBgColor}`}
             >
               <Link2 className="h-3.5 w-3.5" />
               Conectar {config.name}
