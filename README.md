@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.5.0-violet?style=flat-square" alt="Version" />
+  <img src="https://img.shields.io/badge/version-0.6.0-violet?style=flat-square" alt="Version" />
   <img src="https://img.shields.io/badge/build-passing-brightgreen?style=flat-square" alt="Build Status" />
 </p>
 
@@ -34,7 +34,7 @@ OpenStage es una plataforma all-in-one diseñada para bandas y músicos que quie
 - **Generar clips virales** optimizados automáticamente desde videos largos (shows, ensayos, sesiones)
 - **Gestionar bandas** con roles (admin, editor, viewer) e invitaciones por código
 - **Añadir subtítulos** y formatear para cada red social (TikTok, Instagram, YouTube)
-- **Centralizar métricas** de todas las plataformas (próximamente)
+- **Centralizar métricas** de Spotify, YouTube, Instagram y TikTok con gráficos de crecimiento
 - **Programar publicaciones** en múltiples redes sociales (próximamente)
 
 ## ✨ Características Principales
@@ -50,6 +50,18 @@ OpenStage es una plataforma all-in-one diseñada para bandas y músicos que quie
 - **Procesamiento rápido** - Clips de 30 segundos generados en minutos
 - **Descarga directa** - Clips listos para publicar, individual o masiva
 - **Wizard intuitivo** - Flujo paso a paso para configurar formato, intención y subtítulos
+
+### 📊 Analytics Dashboard _(Beta)_
+
+- **OAuth por plataforma** - Flujo de autorización seguro con tokens almacenados cifrados en Supabase
+- **4 plataformas** - Spotify (artista + top tracks), YouTube (canal + videos), Instagram (Business/Creator), TikTok
+- **Auto-sync inteligente** - Sincronización automática si los datos tienen más de 6 horas
+- **Sync manual** - Botón para refrescar métricas bajo demanda
+- **Histórico 30 días** - Snapshots diarios guardados en `social_stats_snapshots`
+- **Gráfico de crecimiento** - LineChart multi-plataforma con Recharts
+- **Métricas detalladas** - Seguidores, popularidad, vistas, reproducciones y más por plataforma
+- **Gestión por banda** - Cada banda tiene sus propias conexiones; solo admins pueden conectar/desconectar
+- **RLS estricto** - Las credenciales de API nunca se exponen al cliente
 
 ### 👥 Gestión de Bandas
 
@@ -110,28 +122,32 @@ src/
 │   │   ├── dashboard/     # Dashboard principal
 │   │   ├── onboarding/    # Onboarding post-registro
 │   │   ├── settings/      # Configuración de usuario
-│   │   └── tools/         # Herramientas (clip-generator)
+│   │   └── tools/         # Herramientas (clip-generator, analytics)
 │   ├── (legal)/           # Páginas legales (privacy, cookies)
 │   └── api/               # API Routes
+│       ├── social/        # connect, callback, sync, disconnect
+│       └── drive/         # Google Drive
 ├── components/
 │   ├── ui/                # Componentes base (shadcn/ui + custom)
 │   ├── layout/            # Sidebar, Header, etc.
 │   └── features/          # Componentes por feature
+│       ├── analytics/     # PlatformConnectionCard, GrowthChart, OverviewMetricsGrid…
 │       ├── audio-moments/ # Análisis de audio y timeline
 │       ├── tours/         # Tours guiados con Shepherd.js
 │       └── transcription/ # Transcripción con Whisper
 ├── contexts/              # React Contexts (Auth, Band)
-├── hooks/                 # Custom hooks (useAuth, useBand, useTranscription)
+├── hooks/                 # Custom hooks (useAuth, useBand, useSocialConnections…)
 ├── lib/
 │   ├── audio/             # Análisis de audio con Web Audio API
 │   ├── clip-generator/    # Generación de clips con FFmpeg
 │   ├── cookies/           # Gestión de preferencias de cookies
+│   ├── social/            # Servicios OAuth + API: spotify, youtube, instagram, tiktok
 │   ├── supabase/          # Cliente, middleware, tipos
 │   ├── tour/              # Sistema de tours guiados
 │   ├── transcription/     # Whisper WASM y extracción de audio
 │   └── constants/         # Formatos, rutas, estilos
 ├── stores/                # Zustand stores
-└── types/                 # TypeScript types
+└── types/                 # TypeScript types (DB + social)
 supabase/
 └── migrations/            # Migraciones SQL
 public/
@@ -182,9 +198,10 @@ docs(readme): actualizar instrucciones
 - [x] **v0.2.0** - Autenticación con Supabase (email + Google)
 - [x] **v0.3.0** - Generador de clips con FFmpeg WASM
 - [x] **v0.4.0** - Gestión de bandas y onboarding
-- [ ] **v0.5.0** - Integración de herramientas con bandas
-- [ ] **v0.6.0** - Dashboard de métricas (Spotify, YouTube)
-- [ ] **v0.7.0** - Programación de publicaciones
+- [x] **v0.5.0** - Integración de herramientas con bandas, Google Drive, Tours, Cookies
+- [x] **v0.6.0** - Analytics Dashboard (Spotify, YouTube, Instagram, TikTok)
+- [ ] **v0.7.0** - Social Publisher (publicación directa a redes)
+- [ ] **v0.8.0** - Editor de Clips con timeline
 
 ## 🔧 Stack Tecnológico
 
@@ -196,6 +213,7 @@ docs(readme): actualizar instrucciones
 | UI        | shadcn/ui + Lucide Icons           |
 | Backend   | Supabase (Auth, Database, Storage) |
 | Video     | FFmpeg WASM                        |
+| Charts    | Recharts                           |
 | Deploy    | Vercel                             |
 
 ## � Licencia
@@ -208,6 +226,7 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) par
 - [Supabase](https://supabase.com/) - Backend as a Service
 - [shadcn/ui](https://ui.shadcn.com/) - Componentes UI
 - [FFmpeg WASM](https://ffmpegwasm.netlify.app/) - Procesamiento de video en el navegador
+- [Recharts](https://recharts.org/) - Gráficos y visualización de datos
 - [Vercel](https://vercel.com/) - Hosting y deploy
 
 ---
