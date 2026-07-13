@@ -4,6 +4,7 @@ import { Providers } from '@/components/providers';
 import { CookieConsentProvider } from '@/components/providers/cookie-consent-provider';
 import { OrganizationJsonLd, WebsiteJsonLd } from '@/components/seo';
 import { Analytics } from '@vercel/analytics/next';
+import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 import '@/lib/tour/shepherd-theme.css';
 
@@ -113,6 +114,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-zinc-950 font-sans">
         <Providers>{children}</Providers>
         <CookieConsentProvider />
+        <Toaster />
       </body>
       <Analytics />
     </html>

@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Band, BandMember, BandRole, Profile } from '@/types/database';
+import { toast } from '@/lib/toast';
 
 interface MemberWithProfile extends BandMember {
   profiles: Pick<Profile, 'id' | 'full_name' | 'email' | 'avatar_url'>;
@@ -141,9 +142,10 @@ export default function BandDetailPage() {
 
     if (error) {
       console.error('Error changing role:', error);
-      alert('No se pudo cambiar el rol. Verifica que tengas permisos de administrador.');
+      toast.error('No se pudo cambiar el rol. Verifica que tengas permisos de administrador.');
     } else {
       setMembers(members.map(m => (m.id === memberId ? { ...m, role: newRole } : m)));
+      toast.success('Rol actualizado correctamente.');
     }
     setActionLoading(null);
   };
@@ -157,9 +159,10 @@ export default function BandDetailPage() {
 
     if (error) {
       console.error('Error removing member:', error);
-      alert('No se pudo expulsar al miembro.');
+      toast.error('No se pudo expulsar al miembro.');
     } else {
       setMembers(members.filter(m => m.id !== memberId));
+      toast.success('Miembro eliminado de la banda.');
     }
     setActionLoading(null);
   };
@@ -173,7 +176,7 @@ export default function BandDetailPage() {
     // Check if user is the only admin
     const adminCount = members.filter(m => m.role === 'admin').length;
     if (myMembership.role === 'admin' && adminCount === 1) {
-      alert('No puedes salir siendo el único admin. Asigna otro admin primero.');
+      toast.warning('No puedes salir siendo el único admin. Asigna otro admin primero.');
       return;
     }
 

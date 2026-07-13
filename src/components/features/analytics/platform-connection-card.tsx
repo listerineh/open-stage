@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CheckCircle2, AlertCircle, Loader2, Link2, Unlink } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Loader2, Link2, Unlink, Music, Check } from 'lucide-react';
 import type { SocialPlatform, SocialConnection } from '@/types/database';
 import type { PlatformConfig } from '@/lib/social/types';
 import { PlatformIcon } from './platform-icon';
@@ -12,6 +12,14 @@ interface PlatformConnectionCardProps {
   bandId: string;
   isAdmin: boolean;
   onDisconnect: (platform: SocialPlatform) => Promise<void>;
+  onConnectionUpdated?: () => void;
+}
+
+function extractSpotifyArtistId(input: string): string | null {
+  const match = input.match(/spotify\.com\/(?:intl-[a-z]+\/)?artist\/([A-Za-z0-9]+)/);
+  if (match) return match[1];
+  if (/^[A-Za-z0-9]{22}$/.test(input.trim())) return input.trim();
+  return null;
 }
 
 export function PlatformConnectionCard({
@@ -20,11 +28,19 @@ export function PlatformConnectionCard({
   bandId,
   isAdmin,
   onDisconnect,
+  onConnectionUpdated,
 }: PlatformConnectionCardProps) {
   const [disconnecting, setDisconnecting] = useState(false);
+  const [artistUrl, setArtistUrl] = useState('');
+  const [savingArtist, setSavingArtist] = useState(false);
+  const [artistSaved, setArtistSaved] = useState(false);
+  const [artistError, setArtistError] = useState<string | null>(null);
 
   const isConnected = !!connection;
-  const profileData = connection?.profile_data as { name?: string; avatar?: string } | undefined;
+  const profileData = connection?.profile_data as
+    | { name?: string; avatar?: string; artistId?: string }
+    | undefined;
+  const hasArtistId = !!profileData?.artistId;
 
   const handleConnect = () => {
     window.location.href = `/api/social/connect/${config.id}?bandId=${bandId}`;
@@ -38,6 +54,38 @@ export function PlatformConnectionCard({
       console.error('Disconnect error:', err);
     } finally {
       setDisconnecting(false);
+    }
+  };
+
+  const handleSaveArtist = async () => {
+    setArtistError(null);
+    const artistId = extractSpotifyArtistId(artistUrl);
+    if (!artistId) {
+      setArtistError(
+        'URL inválida. Usa el enlace de compartir de tu perfil de artista en Spotify.'
+      );
+      return;
+    }
+    setSavingArtist(true);
+    try {
+      const res = await fetch('/api/social/spotify-artist', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bandId, artistId }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setArtistError(data.error ?? 'Error al guardar el artista.');
+      } else {
+        setArtistSaved(true);
+        setArtistUrl('');
+        onConnectionUpdated?.();
+        setTimeout(() => setArtistSaved(false), 3000);
+      }
+    } catch {
+      setArtistError('Error de red. Intenta de nuevo.');
+    } finally {
+      setSavingArtist(false);
     }
   };
 
@@ -89,20 +137,64 @@ export function PlatformConnectionCard({
       )}
 
       {isAdmin && (
-        <div className="mt-4">
+        <div className="mt-4 space-y-3">
           {isConnected ? (
-            <button
-              onClick={handleDisconnect}
-              disabled={disconnecting}
-              className="flex items-center gap-1.5 text-xs text-zinc-500 transition-colors hover:text-red-400 disabled:opacity-50"
-            >
-              {disconnecting ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : (
-                <Unlink className="h-3 w-3" />
+            <>
+              {/* Spotify: artist URL input */}
+              {config.id === 'spotify' && (
+                <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-3">
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-400">
+                    <Music className="h-3 w-3" />
+                    Perfil de artista
+                    {hasArtistId && (
+                      <span className="ml-auto flex items-center gap-1 text-emerald-400">
+                        <Check className="h-3 w-3" /> Configurado
+                      </span>
+                    )}
+                  </div>
+                  {!hasArtistId && (
+                    <p className="mt-1 text-xs text-zinc-600">
+                      Agrega tu URL de artista para ver métricas reales de tu banda.
+                    </p>
+                  )}
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      type="text"
+                      value={artistUrl}
+                      onChange={e => setArtistUrl(e.target.value)}
+                      placeholder="https://open.spotify.com/artist/..."
+                      className="min-w-0 flex-1 rounded-md border border-zinc-700 bg-zinc-900 px-2.5 py-1.5 text-xs text-white placeholder-zinc-600 outline-none focus:border-emerald-500"
+                    />
+                    <button
+                      onClick={handleSaveArtist}
+                      disabled={savingArtist || !artistUrl.trim()}
+                      className="shrink-0 rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-emerald-500 disabled:opacity-40"
+                    >
+                      {savingArtist ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : artistSaved ? (
+                        <Check className="h-3 w-3" />
+                      ) : (
+                        'Guardar'
+                      )}
+                    </button>
+                  </div>
+                  {artistError && <p className="mt-1.5 text-xs text-red-400">{artistError}</p>}
+                </div>
               )}
-              Desconectar
-            </button>
+              <button
+                onClick={handleDisconnect}
+                disabled={disconnecting}
+                className="flex items-center gap-1.5 text-xs text-zinc-500 transition-colors hover:text-red-400 disabled:opacity-50"
+              >
+                {disconnecting ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <Unlink className="h-3 w-3" />
+                )}
+                Desconectar
+              </button>
+            </>
           ) : (
             <button
               onClick={handleConnect}

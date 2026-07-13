@@ -102,12 +102,15 @@ export async function POST(request: NextRequest) {
 
       let fetchResult;
       switch (p) {
-        case 'spotify':
-          fetchResult = await fetchSpotifyStats(
-            accessToken,
-            connection.platform_user_id ?? undefined
-          );
+        case 'spotify': {
+          const profileData = connection.profile_data as Record<string, unknown> | null;
+          const spotifyArtistId =
+            (profileData?.artistId as string | undefined) ??
+            connection.platform_user_id ??
+            undefined;
+          fetchResult = await fetchSpotifyStats(accessToken, spotifyArtistId);
           break;
+        }
         case 'youtube':
           fetchResult = await fetchYouTubeStats(accessToken);
           break;
@@ -135,10 +138,14 @@ export async function POST(request: NextRequest) {
         { onConflict: 'band_id,platform,snapshot_date' }
       );
 
+      const existingProfileData = (connection.profile_data as Record<string, unknown>) ?? {};
       await supabase
         .from('social_connections')
         .update({
-          profile_data: fetchResult.profileData as unknown as Record<string, unknown>,
+          profile_data: {
+            ...existingProfileData,
+            ...(fetchResult.profileData as unknown as Record<string, unknown>),
+          },
           updated_at: new Date().toISOString(),
         })
         .eq('id', connection.id);
