@@ -379,14 +379,20 @@
 
 ---
 
-## FASE 6: Tool - Analytics Dashboard
+## FASE 6: Tool - Analytics Dashboard ✅ COMPLETADA
 
-- [ ] Conexión OAuth con redes sociales
-- [ ] Dashboard con métricas de Spotify, YouTube, TikTok, Instagram
-- [ ] Gráficos de crecimiento (Recharts)
-- [ ] Comparativas entre plataformas
-- [ ] Histórico de datos
-- [ ] Tag: v0.6.0
+- [x] Conexión OAuth con redes sociales
+- [x] Dashboard con métricas de Spotify, YouTube, TikTok, Instagram
+- [x] Gráficos de crecimiento (Recharts)
+- [x] Comparativas entre plataformas
+- [x] Histórico de datos (snapshots en Supabase)
+- [x] Migración Supabase: social_connections + social_stats_snapshots
+- [x] Service layer: spotify.ts, youtube.ts, instagram.ts, tiktok.ts
+- [x] API routes: connect, callback, sync, disconnect
+- [x] Hooks: use-social-connections, use-social-stats
+- [x] Componentes: PlatformConnectionCard, GrowthChart, OverviewMetricsGrid, PlatformBreakdown, SyncButton
+- [x] Página /tools/analytics con auto-sync (>6h)
+- [x] Tag: v0.6.0
 
 ---
 

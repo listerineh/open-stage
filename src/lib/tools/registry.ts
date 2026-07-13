@@ -70,7 +70,7 @@ export const TOOLS: Tool[] = [
     shortDescription: 'Métricas de todas tus redes',
     iconName: 'bar-chart',
     href: '/tools/analytics',
-    status: 'coming-soon',
+    status: 'beta',
     category: 'analytics',
     color: 'text-emerald-400',
     bgColor: 'bg-emerald-500/10',
