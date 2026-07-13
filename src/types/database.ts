@@ -122,6 +122,7 @@ export interface SocialMetrics {
   spotify?: {
     popularity: number;
     topTracks?: SpotifyTrack[];
+    needsArtistUrl?: boolean;
   };
   youtube?: {
     totalViews: number;

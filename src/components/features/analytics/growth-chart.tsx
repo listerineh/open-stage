@@ -10,12 +10,14 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { TrendingUp, RefreshCw } from 'lucide-react';
 import type { SocialPlatform, SocialStatsSnapshot } from '@/types/database';
 import { PLATFORM_CONFIGS } from '@/lib/social/types';
 
 interface GrowthChartProps {
   snapshots: SocialStatsSnapshot[];
   connectedPlatforms: SocialPlatform[];
+  lastSyncedAt: Date | null;
 }
 
 const PLATFORM_CHART_COLORS: Record<SocialPlatform, string> = {
@@ -44,9 +46,7 @@ function formatYAxis(value: number): string {
   return value.toString();
 }
 
-export function GrowthChart({ snapshots, connectedPlatforms }: GrowthChartProps) {
-  if (snapshots.length === 0 || connectedPlatforms.length === 0) return null;
-
+export function GrowthChart({ snapshots, connectedPlatforms, lastSyncedAt }: GrowthChartProps) {
   const dateMap = new Map<string, ChartDataPoint>();
 
   for (const snap of snapshots) {
@@ -57,14 +57,34 @@ export function GrowthChart({ snapshots, connectedPlatforms }: GrowthChartProps)
 
   const data = Array.from(dateMap.values()).sort((a, b) => a.date.localeCompare(b.date));
 
-  if (data.length < 2) {
+  const chartablePlatforms = connectedPlatforms.filter(
+    p => snapshots.filter(s => s.platform === p).length >= 2
+  );
+
+  if (data.length < 2 || chartablePlatforms.length === 0) {
+    const syncedOnce = snapshots.length > 0;
+    const syncedDate = lastSyncedAt
+      ? new Date(lastSyncedAt).toLocaleDateString('es', { day: 'numeric', month: 'long' })
+      : null;
+
     return (
-      <div className="flex h-48 items-center justify-center rounded-xl border border-dashed border-zinc-800 text-center">
+      <div className="flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-zinc-800 bg-zinc-900/20 px-6 py-10 text-center">
+        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-800/60">
+          <TrendingUp className="h-5 w-5 text-zinc-500" />
+        </div>
         <div>
-          <p className="text-sm text-zinc-500">No hay suficientes datos para mostrar tendencias</p>
-          <p className="mt-1 text-xs text-zinc-600">
-            Sincroniza durante varios días para ver el crecimiento
+          <p className="text-sm font-medium text-zinc-300">
+            {syncedOnce ? 'Primer sincronización registrada' : 'Aún no hay datos de tendencia'}
           </p>
+          <p className="mt-1 max-w-sm text-xs text-zinc-500">
+            {syncedOnce
+              ? `Datos registrados${syncedDate ? ` el ${syncedDate}` : ''}. El gráfico aparecerá cuando tengas sincronizaciones en días distintos.`
+              : 'Conecta una plataforma y sincroniza para comenzar a registrar tu crecimiento.'}
+          </p>
+        </div>
+        <div className="mt-1 flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs text-zinc-500">
+          <RefreshCw className="h-3 w-3" />
+          Sincroniza mañana para ver tu primera tendencia
         </div>
       </div>
     );

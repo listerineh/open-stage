@@ -43,10 +43,30 @@ export function PlatformBreakdown({ latestByPlatform }: PlatformBreakdownProps) 
 
             <div className="p-5">
               {platform === 'spotify' &&
-                snap.metrics.spotify?.topTracks &&
-                snap.metrics.spotify.topTracks.length > 0 && (
-                  <SpotifyTopTracks tracks={snap.metrics.spotify.topTracks} />
-                )}
+                (snap.metrics.spotify?.needsArtistUrl ? (
+                  <div className="flex flex-col items-center gap-2 py-6 text-center">
+                    <Music className="h-7 w-7 text-zinc-700" />
+                    <p className="text-xs font-medium text-zinc-400">
+                      Perfil de artista no configurado
+                    </p>
+                    <p className="max-w-xs text-xs text-zinc-600">
+                      Ve a la sección <span className="text-zinc-400">Plataformas</span> y agrega la
+                      URL de tu perfil de artista en Spotify para ver métricas reales.
+                    </p>
+                  </div>
+                ) : snap.metrics.spotify?.topTracks && snap.metrics.spotify.topTracks.length > 0 ? (
+                  <SpotifyTopTracks
+                    tracks={snap.metrics.spotify.topTracks}
+                    popularity={snap.metrics.spotify.popularity}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center gap-2 py-4 text-center">
+                    <p className="text-xs text-zinc-500">No hay canciones disponibles aún.</p>
+                    <p className="text-xs text-zinc-600">
+                      Sincroniza de nuevo para cargar tus top tracks.
+                    </p>
+                  </div>
+                ))}
 
               {platform === 'youtube' &&
                 snap.metrics.youtube?.recentVideos &&
@@ -75,9 +95,23 @@ export function PlatformBreakdown({ latestByPlatform }: PlatformBreakdownProps) 
   );
 }
 
-function SpotifyTopTracks({ tracks }: { tracks: SpotifyTrack[] }) {
+function SpotifyTopTracks({ tracks, popularity }: { tracks: SpotifyTrack[]; popularity: number }) {
   return (
     <div>
+      {popularity > 0 && (
+        <div className="mb-4">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-zinc-500">Popularidad del artista</span>
+            <span className="font-medium text-white">{popularity}/100</span>
+          </div>
+          <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
+            <div
+              className="h-full rounded-full bg-emerald-500"
+              style={{ width: `${popularity}%` }}
+            />
+          </div>
+        </div>
+      )}
       <p className="mb-3 text-xs font-medium text-zinc-500">Top Canciones</p>
       <div className="space-y-2">
         {tracks.map((track, i) => (

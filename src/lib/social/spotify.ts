@@ -96,59 +96,72 @@ export async function fetchSpotifyStats(
 ): Promise<PlatformFetchResult> {
   const headers = { Authorization: `Bearer ${accessToken}` };
 
-  const [profileRes, topArtistsRes] = await Promise.all([
-    fetch(`${SPOTIFY_API}/me`, { headers }),
-    fetch(`${SPOTIFY_API}/me/top/artists?limit=5&time_range=medium_term`, { headers }),
-  ]);
+  const profileRes = await fetch(`${SPOTIFY_API}/me`, { headers });
 
   const profile = await profileRes.json();
-  const topArtists = topArtistsRes.ok ? await topArtistsRes.json() : null;
 
   let followers = profile.followers?.total ?? 0;
   let popularity = 0;
   let topTracks: SpotifyTrack[] = [];
 
+  const mapTrack = (t: {
+    id: string;
+    name: string;
+    popularity: number;
+    preview_url: string | null;
+    external_urls: { spotify: string };
+    album: { name: string; images: { url: string }[] };
+  }): SpotifyTrack => ({
+    id: t.id,
+    name: t.name,
+    popularity: t.popularity,
+    previewUrl: t.preview_url,
+    externalUrl: t.external_urls.spotify,
+    albumName: t.album.name,
+    albumImageUrl: t.album.images?.[0]?.url ?? null,
+  });
+
+  let artistResolved = false;
+
   if (artistId) {
     const artistRes = await fetch(`${SPOTIFY_API}/artists/${artistId}`, { headers });
     if (artistRes.ok) {
+      artistResolved = true;
       const artist = await artistRes.json();
       followers = artist.followers?.total ?? followers;
       popularity = artist.popularity ?? 0;
 
-      const tracksRes = await fetch(`${SPOTIFY_API}/artists/${artistId}/top-tracks?market=US`, {
-        headers,
-      });
-      if (tracksRes.ok) {
-        const tracksData = await tracksRes.json();
-        topTracks = (tracksData.tracks ?? [])
-          .slice(0, 5)
-          .map(
-            (t: {
-              id: string;
-              name: string;
-              popularity: number;
-              preview_url: string | null;
-              external_urls: { spotify: string };
-              album: { name: string; images: { url: string }[] };
-            }) => ({
-              id: t.id,
-              name: t.name,
-              popularity: t.popularity,
-              previewUrl: t.preview_url,
-              externalUrl: t.external_urls.spotify,
-              albumName: t.album.name,
-              albumImageUrl: t.album.images?.[0]?.url ?? null,
-            })
-          );
+      for (const market of ['MX', 'US', 'ES']) {
+        const tracksRes = await fetch(
+          `${SPOTIFY_API}/artists/${artistId}/top-tracks?market=${market}`,
+          { headers }
+        );
+        if (tracksRes.ok) {
+          const tracksData = await tracksRes.json();
+          topTracks = (tracksData.tracks ?? []).slice(0, 5).map(mapTrack);
+          if (topTracks.length > 0) break;
+        }
       }
+    } else {
     }
-  } else if (topArtists?.items?.length > 0) {
-    const myArtist =
-      topArtists.items.find(
-        (a: { name: string }) =>
-          profile.display_name && a.name.toLowerCase().includes(profile.display_name.toLowerCase())
-      ) || topArtists.items[0];
-    popularity = myArtist?.popularity ?? 0;
+  }
+
+  if (!artistResolved) {
+    return {
+      followers: 0,
+      metrics: {
+        spotify: {
+          popularity: 0,
+          topTracks: [],
+          needsArtistUrl: true,
+        },
+      },
+      profileData: {
+        name: profile.display_name || profile.id,
+        avatar: profile.images?.[0]?.url ?? null,
+        url: profile.external_urls?.spotify ?? `https://open.spotify.com/user/${profile.id}`,
+      },
+    };
   }
 
   return {

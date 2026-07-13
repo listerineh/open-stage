@@ -1,6 +1,6 @@
 'use client';
 
-import { TrendingUp, TrendingDown, Minus, Users } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Users, Music } from 'lucide-react';
 import type { SocialPlatform, SocialStatsSnapshot } from '@/types/database';
 import { PLATFORM_CONFIGS } from '@/lib/social/types';
 import { PlatformIcon } from './platform-icon';
@@ -87,8 +87,19 @@ export function OverviewMetricsGrid({
               </div>
 
               <div className="mt-3">
-                <p className="text-2xl font-semibold text-white">{formatNumber(snap.followers)}</p>
-                <p className="mt-0.5 text-xs text-zinc-500">seguidores</p>
+                {platform === 'spotify' && snap.metrics.spotify?.needsArtistUrl ? (
+                  <div className="flex items-center gap-1.5 text-xs text-amber-400">
+                    <Music className="h-3.5 w-3.5 shrink-0" />
+                    <span>Configura tu perfil de artista para ver datos reales</span>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-2xl font-semibold text-white">
+                      {formatNumber(snap.followers)}
+                    </p>
+                    <p className="mt-0.5 text-xs text-zinc-500">seguidores</p>
+                  </>
+                )}
               </div>
 
               {growth && (
@@ -117,6 +128,7 @@ function PlatformSpecificMetrics({
   const m = snapshot.metrics;
 
   if (platform === 'spotify' && m.spotify) {
+    if (m.spotify.needsArtistUrl) return null;
     return (
       <div className="mt-3 border-t border-zinc-800/60 pt-3">
         <div className="flex items-center justify-between text-xs">

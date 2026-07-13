@@ -13,6 +13,7 @@ import {
   Info,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/lib/toast';
 import type { Band } from '@/types/database';
 
 interface DriveFolder {
@@ -29,6 +30,7 @@ interface DriveConnectProps {
 export function DriveConnect({ band, onUpdate }: DriveConnectProps) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [confirmDisconnect, setConfirmDisconnect] = useState(false);
   const [showFolderPicker, setShowFolderPicker] = useState(false);
   const [folders, setFolders] = useState<DriveFolder[]>([]);
   const [loadingFolders, setLoadingFolders] = useState(false);
@@ -113,12 +115,16 @@ export function DriveConnect({ band, onUpdate }: DriveConnectProps) {
   };
 
   const handleDisconnect = async () => {
-    if (
-      !confirm('¿Estás seguro de desconectar Google Drive? Los clips guardados seguirán en Drive.')
-    ) {
+    if (!confirmDisconnect) {
+      setConfirmDisconnect(true);
+      toast.warning('Haz clic en "Confirmar" para desconectar Google Drive.', {
+        title: '¿Desconectar Drive?',
+        duration: 6000,
+      });
       return;
     }
 
+    setConfirmDisconnect(false);
     setIsDisconnecting(true);
     try {
       const response = await fetch('/api/drive/connect', {
@@ -135,9 +141,13 @@ export function DriveConnect({ band, onUpdate }: DriveConnectProps) {
           drive_connected_at: null,
           drive_connected_by: null,
         });
+        toast.success('Google Drive desconectado.');
+      } else {
+        toast.error('No se pudo desconectar Google Drive. Intenta de nuevo.');
       }
     } catch (error) {
       console.error('Error disconnecting:', error);
+      toast.error('Error de red al desconectar.');
     }
     setIsDisconnecting(false);
   };
@@ -379,20 +389,32 @@ export function DriveConnect({ band, onUpdate }: DriveConnectProps) {
         </div>
 
         {isConnected ? (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDisconnect}
-            disabled={isDisconnecting}
-            className="border-red-500/30 text-red-400 hover:bg-red-500/10"
-          >
-            {isDisconnecting ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Unlink className="mr-2 h-4 w-4" />
+          <div className="flex items-center gap-2">
+            {confirmDisconnect && !isDisconnecting && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setConfirmDisconnect(false)}
+                className="border-zinc-700 text-zinc-400 hover:bg-zinc-800"
+              >
+                Cancelar
+              </Button>
             )}
-            Desconectar
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDisconnect}
+              disabled={isDisconnecting}
+              className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+            >
+              {isDisconnecting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Unlink className="mr-2 h-4 w-4" />
+              )}
+              {confirmDisconnect ? 'Confirmar desconexión' : 'Desconectar'}
+            </Button>
+          </div>
         ) : (
           <Button
             onClick={handleConnect}
