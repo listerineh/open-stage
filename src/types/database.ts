@@ -91,3 +91,79 @@ export interface BandWithRole extends Band {
   role: BandRole;
   is_current: boolean;
 }
+
+export type SocialPlatform = 'spotify' | 'youtube' | 'instagram' | 'tiktok';
+
+export interface SocialConnection {
+  id: string;
+  band_id: string;
+  platform: SocialPlatform;
+  access_token: string;
+  refresh_token: string | null;
+  expires_at: string | null;
+  platform_user_id: string | null;
+  platform_username: string | null;
+  profile_data: Record<string, unknown>;
+  connected_at: string;
+  updated_at: string;
+}
+
+export interface SocialStatsSnapshot {
+  id: string;
+  band_id: string;
+  platform: SocialPlatform;
+  snapshot_date: string;
+  followers: number;
+  metrics: SocialMetrics;
+  synced_at: string;
+}
+
+export interface SocialMetrics {
+  spotify?: {
+    popularity: number;
+    topTracks?: SpotifyTrack[];
+  };
+  youtube?: {
+    totalViews: number;
+    videoCount: number;
+    watchTimeMinutes?: number;
+    recentVideos?: YouTubeVideo[];
+  };
+  instagram?: {
+    following: number;
+    mediaCount: number;
+    reach?: number;
+    impressions?: number;
+  };
+  tiktok?: {
+    totalLikes: number;
+    videoCount: number;
+  };
+}
+
+export interface SpotifyTrack {
+  id: string;
+  name: string;
+  popularity: number;
+  previewUrl: string | null;
+  externalUrl: string;
+  albumName: string;
+  albumImageUrl: string | null;
+}
+
+export interface YouTubeVideo {
+  id: string;
+  title: string;
+  thumbnailUrl: string;
+  viewCount: number;
+  likeCount: number;
+  publishedAt: string;
+  url: string;
+}
+
+export interface SocialProfileData {
+  name: string;
+  avatar: string | null;
+  url: string;
+  displayName?: string;
+}

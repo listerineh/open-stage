@@ -54,8 +54,7 @@ const NAV_ITEMS = [
     label: 'Analytics',
     href: '/tools/analytics',
     icon: BarChart3,
-    disabled: true,
-    badge: 'Pronto',
+    badge: 'Beta',
   },
   {
     label: 'Social Publisher',
@@ -127,7 +126,7 @@ export function Sidebar({ user }: SidebarProps) {
         <Link href="/dashboard" onClick={() => setIsOpen(false)} className="relative">
           <Logo size="lg" />
           <span className="absolute -bottom-3 -right-7 rounded-full bg-zinc-800/50 px-2 py-0.5 text-[10px] font-medium text-zinc-400">
-            alpha-v0.5.0
+            alpha-v0.6.0
           </span>
         </Link>
         <button
@@ -251,14 +250,21 @@ export function Sidebar({ user }: SidebarProps) {
               href={item.href}
               onClick={() => setIsOpen(false)}
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                'flex items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                 active
                   ? 'bg-violet-500/10 text-violet-400'
                   : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
               )}
             >
-              <Icon className="h-5 w-5" />
-              {item.label}
+              <div className="flex items-center gap-3">
+                <Icon className="h-5 w-5" />
+                {item.label}
+              </div>
+              {item.badge && (
+                <span className="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-medium text-emerald-400">
+                  {item.badge}
+                </span>
+              )}
             </Link>
           );
         })}
