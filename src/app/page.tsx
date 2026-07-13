@@ -10,6 +10,9 @@ import {
   Scissors,
   CheckCircle,
   Play,
+  TrendingUp,
+  Users,
+  RefreshCw,
 } from 'lucide-react';
 import { Logo } from '@/components/ui/logo';
 
@@ -41,7 +44,8 @@ const FEATURES = [
       'Visualiza métricas de Spotify, YouTube, TikTok e Instagram en un solo lugar con gráficos de crecimiento.',
     color: 'text-emerald-400',
     bgColor: 'bg-emerald-500/10',
-    available: false,
+    available: true,
+    beta: true,
   },
   {
     icon: Share2,
@@ -69,6 +73,8 @@ const BENEFITS = [
   'Sin marcas de agua',
   'Múltiples formatos de salida',
   'Subtítulos automáticos',
+  'Métricas unificadas de todas tus redes',
+  'Histórico de crecimiento de seguidores',
   'Descarga masiva en ZIP',
 ];
 
@@ -152,7 +158,7 @@ export default function Home() {
           </section>
 
           {/* Tools Preview Section */}
-          <section className="py-16">
+          <section className="space-y-10 py-16">
             <div className="relative">
               {/* Stacked tool cards */}
               <div className="relative mx-auto max-w-4xl">
@@ -259,6 +265,114 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            {/* Analytics Dashboard Preview */}
+            <div className="relative mt-10">
+              <div className="relative mx-auto max-w-4xl">
+                <div className="overflow-hidden rounded-2xl border border-emerald-500/20 bg-zinc-900/90 shadow-2xl backdrop-blur-sm">
+                  {/* Browser header */}
+                  <div className="flex items-center gap-2 border-b border-zinc-800 px-4 py-3">
+                    <div className="h-3 w-3 rounded-full bg-red-500/80" />
+                    <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
+                    <div className="h-3 w-3 rounded-full bg-green-500/80" />
+                    <span className="ml-4 text-xs text-zinc-500">
+                      openstage.online/tools/analytics
+                    </span>
+                    <span className="ml-auto rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-400">
+                      Beta
+                    </span>
+                  </div>
+
+                  <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
+                    {/* Left: Tool info */}
+                    <div className="flex flex-col justify-center">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-500/10">
+                        <BarChart3 className="h-7 w-7 text-emerald-400" />
+                      </div>
+                      <h3 className="mt-4 text-2xl font-semibold text-white">
+                        Analytics Dashboard
+                      </h3>
+                      <p className="mt-2 text-zinc-400">
+                        Conecta tus redes sociales y visualiza todas tus métricas en un solo lugar.
+                        Histórico de 30 días y tendencias de crecimiento.
+                      </p>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {['Spotify', 'YouTube', 'Instagram', 'TikTok'].map(p => (
+                          <span
+                            key={p}
+                            className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400"
+                          >
+                            {p}
+                          </span>
+                        ))}
+                      </div>
+                      <Link
+                        href="/tools/analytics"
+                        className="mt-6 inline-flex w-fit items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500"
+                      >
+                        Ver dashboard
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </div>
+
+                    {/* Right: Metrics mockup */}
+                    <div className="flex flex-col justify-center gap-3">
+                      {/* Total followers */}
+                      <div className="rounded-xl border border-zinc-800 bg-zinc-800/50 p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-500/10">
+                            <Users className="h-4 w-4 text-violet-400" />
+                          </div>
+                          <div>
+                            <p className="text-xl font-semibold text-white">48.3K</p>
+                            <p className="text-xs text-zinc-500">Seguidores totales</p>
+                          </div>
+                          <div className="ml-auto flex items-center gap-1 text-xs font-medium text-emerald-400">
+                            <TrendingUp className="h-3 w-3" />
+                            +5.2%
+                          </div>
+                        </div>
+                      </div>
+                      {/* Platform rows */}
+                      {[
+                        { name: 'Spotify', val: '12.1K', color: 'bg-emerald-500', pct: '52%' },
+                        { name: 'YouTube', val: '8.4K', color: 'bg-red-500', pct: '43%' },
+                        { name: 'Instagram', val: '18.7K', color: 'bg-pink-500', pct: '72%' },
+                        { name: 'TikTok', val: '9.1K', color: 'bg-cyan-500', pct: '48%' },
+                      ].map(p => (
+                        <div key={p.name} className="flex items-center gap-3">
+                          <div className={`h-2 w-2 shrink-0 rounded-full ${p.color}`} />
+                          <span className="text-xs text-zinc-400">{p.name}</span>
+                          <div className="flex-1 overflow-hidden rounded-full bg-zinc-800">
+                            <div
+                              className={`h-1.5 rounded-full ${p.color} opacity-60`}
+                              style={{ width: p.pct }}
+                            />
+                          </div>
+                          <span className="text-xs font-medium text-white">{p.val}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Bottom stats bar */}
+                  <div className="flex items-center gap-6 border-t border-zinc-800 bg-zinc-900/50 px-6 py-3 md:px-8">
+                    <span className="flex items-center gap-1.5 text-xs text-zinc-500">
+                      <CheckCircle className="h-3.5 w-3.5 text-emerald-400" />
+                      Auto-sync cada 6h
+                    </span>
+                    <span className="flex items-center gap-1.5 text-xs text-zinc-500">
+                      <CheckCircle className="h-3.5 w-3.5 text-emerald-400" />
+                      Histórico 30 días
+                    </span>
+                    <span className="hidden items-center gap-1.5 text-xs text-zinc-500 sm:flex">
+                      <RefreshCw className="h-3.5 w-3.5 text-emerald-400" />
+                      Sync manual disponible
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </section>
 
           {/* Features Grid */}
@@ -281,6 +395,11 @@ export default function Home() {
                   {!feature.available && (
                     <div className="absolute right-4 top-4 rounded-full bg-zinc-800 px-2.5 py-1 text-xs font-medium text-zinc-500">
                       Próximamente
+                    </div>
+                  )}
+                  {feature.available && 'beta' in feature && feature.beta && (
+                    <div className="absolute right-4 top-4 rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-medium text-emerald-400">
+                      Beta
                     </div>
                   )}
                   <div
