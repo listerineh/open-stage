@@ -31,30 +31,48 @@ export const DASHBOARD_TOUR: TourStep[] = [
   {
     id: 'welcome',
     title: '¡Bienvenido a OpenStage! 🎸',
-    text: 'Este es tu centro de control. Desde aquí puedes acceder a todas las herramientas para crear contenido increíble para tu banda.',
+    text: 'Este es tu centro de control. Desde aquí puedes acceder a todas las herramientas y ver el estado de tu banda de un vistazo.',
   },
   {
     id: 'stats',
-    title: 'Tu resumen',
-    text: 'Aquí verás las estadísticas de tu banda: clips generados, alcance y seguidores. Por ahora están vacías, ¡pero pronto las llenarás!',
+    title: 'Resumen rápido',
+    text: 'Aquí ves tus clips generados, cuántas plataformas sociales tienes conectadas y la banda activa. Se actualiza en tiempo real.',
     attachTo: {
       element: '[data-tour="stats-section"]',
       on: 'bottom',
     },
   },
   {
+    id: 'analytics',
+    title: 'Analytics de plataformas',
+    text: 'Conecta tus cuentas de Spotify, YouTube, Instagram y TikTok para ver métricas unificadas. Si ya están conectadas, verás su estado aquí directamente.',
+    attachTo: {
+      element: '[data-tour="analytics-section"]',
+      on: 'bottom',
+    },
+  },
+  {
+    id: 'tools',
+    title: 'Tus herramientas',
+    text: 'Accede rápidamente a todas las herramientas de OpenStage: el Generador de Clips ya está disponible, Analytics está en Beta, y más herramientas están llegando pronto.',
+    attachTo: {
+      element: '[data-tour="tools-section"]',
+      on: 'top',
+    },
+  },
+  {
     id: 'getting-started',
-    title: 'Comienza aquí',
-    text: 'Esta sección te guía para crear tu primer clip viral. Haz clic en "Generar clips" para empezar.',
+    title: '¡Empieza ya!',
+    text: 'Genera tu primer clip viral desde aquí. Sube un video de concierto y lo convertiremos en contenido optimizado para TikTok, Reels y Shorts.',
     attachTo: {
       element: '[data-tour="getting-started"]',
-      on: 'bottom',
+      on: 'top',
     },
   },
   {
     id: 'sidebar',
     title: 'Navegación',
-    text: 'Usa el menú lateral para acceder a todas las herramientas, gestionar tus bandas y configurar tu cuenta.',
+    text: 'Usa el menú lateral para acceder a todas las secciones: herramientas, bandas, configuración y más.',
     attachTo: {
       element: '[data-tour="sidebar-toggle"]',
       on: 'left',
