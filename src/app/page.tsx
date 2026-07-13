@@ -12,6 +12,7 @@ import {
   Play,
 } from 'lucide-react';
 import { Logo } from '@/components/ui/logo';
+import { ToolsCarousel } from '@/components/features/homepage/tools-carousel';
 
 export const metadata: Metadata = {
   title: 'OpenStage - Plataforma Open Source para Músicos',
@@ -41,7 +42,8 @@ const FEATURES = [
       'Visualiza métricas de Spotify, YouTube, TikTok e Instagram en un solo lugar con gráficos de crecimiento.',
     color: 'text-emerald-400',
     bgColor: 'bg-emerald-500/10',
-    available: false,
+    available: true,
+    beta: true,
   },
   {
     icon: Share2,
@@ -69,6 +71,8 @@ const BENEFITS = [
   'Sin marcas de agua',
   'Múltiples formatos de salida',
   'Subtítulos automáticos',
+  'Métricas unificadas de todas tus redes',
+  'Histórico de crecimiento de seguidores',
   'Descarga masiva en ZIP',
 ];
 
@@ -116,7 +120,7 @@ export default function Home() {
             <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5">
               <Zap className="h-3.5 w-3.5 text-violet-400" />
               <span className="text-sm font-medium text-violet-300">
-                🇪🇨 Plataforma ecuatoriana Open Source
+                Plataforma ecuatoriana Open Source
               </span>
             </div>
 
@@ -153,112 +157,12 @@ export default function Home() {
 
           {/* Tools Preview Section */}
           <section className="py-16">
-            <div className="relative">
-              {/* Stacked tool cards */}
-              <div className="relative mx-auto max-w-4xl">
-                {/* Background cards (stacked effect) */}
-                <div className="absolute -right-4 top-8 h-full w-full rotate-2 rounded-2xl border border-zinc-800/50 bg-zinc-900/30 blur-[1px]" />
-                <div className="absolute -left-4 top-4 h-full w-full -rotate-1 rounded-2xl border border-zinc-800/50 bg-zinc-900/50" />
-
-                {/* Main card - Clip Generator */}
-                <div className="relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/90 shadow-2xl backdrop-blur-sm">
-                  {/* Browser header */}
-                  <div className="flex items-center gap-2 border-b border-zinc-800 px-4 py-3">
-                    <div className="h-3 w-3 rounded-full bg-red-500/80" />
-                    <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
-                    <div className="h-3 w-3 rounded-full bg-green-500/80" />
-                    <span className="ml-4 text-xs text-zinc-500">
-                      openstage.online/tools/clip-generator
-                    </span>
-                  </div>
-
-                  {/* Tool content */}
-                  <div className="grid gap-6 p-6 md:grid-cols-2 md:p-8">
-                    {/* Left: Tool info */}
-                    <div className="flex flex-col justify-center">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-violet-500/10">
-                        <Video className="h-7 w-7 text-violet-400" />
-                      </div>
-                      <h3 className="mt-4 text-2xl font-semibold text-white">Generador de Clips</h3>
-                      <p className="mt-2 text-zinc-400">
-                        Sube tu video de concierto, selecciona los formatos y genera clips virales
-                        en minutos.
-                      </p>
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {['TikTok', 'Reels', 'Shorts'].map(format => (
-                          <span
-                            key={format}
-                            className="rounded-full bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-400"
-                          >
-                            {format}
-                          </span>
-                        ))}
-                      </div>
-                      <Link
-                        href="/tools/clip-generator"
-                        className="mt-6 inline-flex w-fit items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-500"
-                      >
-                        Probar ahora
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
-                    </div>
-
-                    {/* Right: Visual mockup */}
-                    <div className="relative flex items-center justify-center">
-                      {/* Phone mockups */}
-                      <div className="relative">
-                        {/* Main phone */}
-                        <div className="relative z-10 w-36 rounded-2xl border-2 border-zinc-700 bg-zinc-800 p-1.5 shadow-xl">
-                          <div className="aspect-[9/16] rounded-xl bg-gradient-to-br from-violet-900/50 to-zinc-900">
-                            <div className="flex h-full flex-col items-center justify-center">
-                              <Play className="h-8 w-8 text-violet-400" />
-                              <div className="mt-4 space-y-1 px-3">
-                                <div className="h-1.5 w-full rounded bg-zinc-700" />
-                                <div className="h-1.5 w-3/4 rounded bg-zinc-700" />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {/* Secondary phone */}
-                        <div className="absolute -right-12 top-6 z-0 w-28 rotate-6 rounded-xl border border-zinc-700/50 bg-zinc-800/80 p-1 opacity-70">
-                          <div className="aspect-[9/16] rounded-lg bg-gradient-to-br from-pink-900/30 to-zinc-900">
-                            <div className="flex h-full items-center justify-center">
-                              <Play className="h-5 w-5 text-pink-400/60" />
-                            </div>
-                          </div>
-                        </div>
-                        {/* Third phone */}
-                        <div className="absolute -left-10 top-10 z-0 w-24 -rotate-6 rounded-xl border border-zinc-700/50 bg-zinc-800/80 p-1 opacity-50">
-                          <div className="aspect-[9/16] rounded-lg bg-gradient-to-br from-blue-900/30 to-zinc-900">
-                            <div className="flex h-full items-center justify-center">
-                              <Play className="h-4 w-4 text-blue-400/60" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Bottom stats bar */}
-                  <div className="flex items-center justify-between border-t border-zinc-800 bg-zinc-900/50 px-6 py-3 md:px-8">
-                    <div className="flex items-center gap-6 text-xs text-zinc-500">
-                      <span className="flex items-center gap-1.5">
-                        <CheckCircle className="h-3.5 w-3.5 text-emerald-400" />
-                        100% en navegador
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <CheckCircle className="h-3.5 w-3.5 text-emerald-400" />
-                        Sin marcas de agua
-                      </span>
-                      <span className="hidden items-center gap-1.5 sm:flex">
-                        <CheckCircle className="h-3.5 w-3.5 text-emerald-400" />
-                        Subtítulos automáticos
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="mb-8 text-center">
+              <p className="text-sm font-medium text-zinc-500">
+                Herramientas disponibles y en camino
+              </p>
             </div>
+            <ToolsCarousel />
           </section>
 
           {/* Features Grid */}
@@ -281,6 +185,11 @@ export default function Home() {
                   {!feature.available && (
                     <div className="absolute right-4 top-4 rounded-full bg-zinc-800 px-2.5 py-1 text-xs font-medium text-zinc-500">
                       Próximamente
+                    </div>
+                  )}
+                  {feature.available && 'beta' in feature && feature.beta && (
+                    <div className="absolute right-4 top-4 rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-medium text-emerald-400">
+                      Beta
                     </div>
                   )}
                   <div
@@ -398,7 +307,7 @@ export default function Home() {
             </p>
 
             {/* Links */}
-            <div className="flex items-center gap-6 text-sm text-zinc-500">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-zinc-500">
               <a
                 href="https://github.com/listerineh/open-stage"
                 target="_blank"
@@ -409,6 +318,18 @@ export default function Home() {
               </a>
               <span className="text-zinc-700">•</span>
               <span>MIT License</span>
+              <span className="text-zinc-700">•</span>
+              <Link href="/privacy" className="transition-colors hover:text-zinc-300">
+                Privacidad
+              </Link>
+              <span className="text-zinc-700">•</span>
+              <Link href="/terms" className="transition-colors hover:text-zinc-300">
+                Términos
+              </Link>
+              <span className="text-zinc-700">•</span>
+              <Link href="/cookies" className="transition-colors hover:text-zinc-300">
+                Cookies
+              </Link>
             </div>
 
             {/* Copyright */}

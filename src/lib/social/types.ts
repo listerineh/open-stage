@@ -5,6 +5,7 @@ export interface PlatformConfig {
   name: string;
   color: string;
   bgColor: string;
+  hoverBgColor: string;
   borderColor: string;
   isBeta: boolean;
   betaNote?: string;
@@ -16,6 +17,7 @@ export const PLATFORM_CONFIGS: Record<SocialPlatform, PlatformConfig> = {
     name: 'Spotify',
     color: 'text-emerald-400',
     bgColor: 'bg-emerald-500/10',
+    hoverBgColor: 'hover:bg-emerald-500/10',
     borderColor: 'border-emerald-500/20',
     isBeta: false,
   },
@@ -24,6 +26,7 @@ export const PLATFORM_CONFIGS: Record<SocialPlatform, PlatformConfig> = {
     name: 'YouTube',
     color: 'text-red-400',
     bgColor: 'bg-red-500/10',
+    hoverBgColor: 'hover:bg-red-500/10',
     borderColor: 'border-red-500/20',
     isBeta: false,
   },
@@ -32,6 +35,7 @@ export const PLATFORM_CONFIGS: Record<SocialPlatform, PlatformConfig> = {
     name: 'Instagram',
     color: 'text-pink-400',
     bgColor: 'bg-pink-500/10',
+    hoverBgColor: 'hover:bg-pink-500/10',
     borderColor: 'border-pink-500/20',
     isBeta: true,
     betaNote: 'Requiere cuenta Business/Creator de Instagram',
@@ -41,6 +45,7 @@ export const PLATFORM_CONFIGS: Record<SocialPlatform, PlatformConfig> = {
     name: 'TikTok',
     color: 'text-cyan-400',
     bgColor: 'bg-cyan-500/10',
+    hoverBgColor: 'hover:bg-cyan-500/10',
     borderColor: 'border-cyan-500/20',
     isBeta: true,
     betaNote: 'Requiere aprobación de app en TikTok for Developers',
