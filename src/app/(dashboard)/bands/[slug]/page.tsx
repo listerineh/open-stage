@@ -134,9 +134,17 @@ export default function BandDetailPage() {
     setActionLoading(memberId);
     setOpenMenu(null);
 
-    await supabase.from('band_members').update({ role: newRole }).eq('id', memberId);
+    const { error } = await supabase
+      .from('band_members')
+      .update({ role: newRole })
+      .eq('id', memberId);
 
-    setMembers(members.map(m => (m.id === memberId ? { ...m, role: newRole } : m)));
+    if (error) {
+      console.error('Error changing role:', error);
+      alert('No se pudo cambiar el rol. Verifica que tengas permisos de administrador.');
+    } else {
+      setMembers(members.map(m => (m.id === memberId ? { ...m, role: newRole } : m)));
+    }
     setActionLoading(null);
   };
 
@@ -145,9 +153,14 @@ export default function BandDetailPage() {
     setActionLoading(memberId);
     setOpenMenu(null);
 
-    await supabase.from('band_members').delete().eq('id', memberId);
+    const { error } = await supabase.from('band_members').delete().eq('id', memberId);
 
-    setMembers(members.filter(m => m.id !== memberId));
+    if (error) {
+      console.error('Error removing member:', error);
+      alert('No se pudo expulsar al miembro.');
+    } else {
+      setMembers(members.filter(m => m.id !== memberId));
+    }
     setActionLoading(null);
   };
 

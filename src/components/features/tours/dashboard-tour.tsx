@@ -6,7 +6,7 @@ import { DASHBOARD_TOUR } from '@/lib/tour/tours';
 
 export function DashboardTour() {
   const { startTour, isLoading, isCompleted } = useTour({
-    tourId: 'dashboard',
+    tourId: 'dashboard-v2',
     steps: DASHBOARD_TOUR,
   });
 
