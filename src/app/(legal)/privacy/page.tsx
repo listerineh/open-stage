@@ -15,7 +15,7 @@ export default function PrivacyPage() {
 
         <article className="prose prose-invert prose-zinc max-w-none">
           <h1 className="text-3xl font-bold text-white">Política de Privacidad</h1>
-          <p className="text-zinc-400">Última actualización: 12 de junio de 2026</p>
+          <p className="text-zinc-400">Última actualización: 13 de julio de 2026</p>
 
           <section className="mt-8">
             <h2 className="text-xl font-semibold text-white">1. Introducción</h2>
@@ -84,7 +84,83 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mt-8">
-            <h2 className="text-xl font-semibold text-white">5. Compartir Información</h2>
+            <h2 className="text-xl font-semibold text-white">
+              5. Integración con Redes Sociales (Analytics)
+            </h2>
+            <p className="text-zinc-300">
+              OpenStage ofrece un módulo opcional de Analytics que te permite conectar tus cuentas
+              de redes sociales para visualizar métricas unificadas. Esta integración es
+              completamente voluntaria.
+            </p>
+
+            <h3 className="mt-4 text-lg font-medium text-zinc-200">5.1 YouTube (Google API)</h3>
+            <p className="text-zinc-300">
+              Cuando conectas tu cuenta de YouTube, accedemos a los siguientes datos mediante la
+              Google API:
+            </p>
+            <ul className="list-disc pl-6 text-zinc-300">
+              <li>Información pública de tu canal (nombre, foto, descripción)</li>
+              <li>Estadísticas del canal (suscriptores, vistas totales, número de videos)</li>
+              <li>Lista de tus videos recientes y sus métricas (vistas, likes)</li>
+              <li>Datos de YouTube Analytics (solo lectura)</li>
+            </ul>
+            <p className="mt-3 text-zinc-300">
+              El uso de los datos obtenidos de las APIs de Google se rige por la{' '}
+              <a
+                href="https://developers.google.com/terms/api-services-user-data-policy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-violet-400 hover:text-violet-300"
+              >
+                Política de Datos de Usuario de los Servicios de API de Google
+              </a>
+              , incluyendo los requisitos de Uso Limitado.
+            </p>
+            <ul className="mt-2 list-disc pl-6 text-zinc-300">
+              <li>No compartimos tus datos de YouTube con terceros</li>
+              <li>No usamos estos datos para publicidad</li>
+              <li>
+                Los tokens de acceso se almacenan de forma segura y cifrada en nuestra base de datos
+              </li>
+              <li>
+                Puedes desconectar tu cuenta de YouTube en cualquier momento desde el Analytics
+                Dashboard, o revocando el acceso desde{' '}
+                <a
+                  href="https://myaccount.google.com/permissions"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-violet-400 hover:text-violet-300"
+                >
+                  myaccount.google.com/permissions
+                </a>
+              </li>
+            </ul>
+
+            <h3 className="mt-4 text-lg font-medium text-zinc-200">5.2 Spotify</h3>
+            <p className="text-zinc-300">
+              Al conectar Spotify accedemos a: información de tu perfil de artista, estadísticas de
+              oyentes y top tracks (solo lectura). Los tokens se almacenan cifrados y puedes
+              desconectarlo desde el dashboard.
+            </p>
+
+            <h3 className="mt-4 text-lg font-medium text-zinc-200">
+              5.3 Instagram y TikTok (Beta)
+            </h3>
+            <p className="text-zinc-300">
+              Estas integraciones están en beta y requieren cuentas Business/Creator. Accedemos
+              únicamente a métricas públicas de tu perfil (seguidores, alcance). No publicamos
+              contenido en tu nombre.
+            </p>
+
+            <p className="mt-4 text-zinc-300">
+              En todos los casos: los datos de redes sociales se usan exclusivamente para mostrar
+              métricas dentro de la plataforma, se almacenan en snapshots de 30 días y se eliminan
+              al desconectar la cuenta.
+            </p>
+          </section>
+
+          <section className="mt-8">
+            <h2 className="text-xl font-semibold text-white">6. Compartir Información</h2>
             <p className="text-zinc-300">
               No vendemos ni compartimos tu información personal con terceros, excepto en los
               siguientes casos:
@@ -107,7 +183,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mt-8">
-            <h2 className="text-xl font-semibold text-white">6. Seguridad de los Datos</h2>
+            <h2 className="text-xl font-semibold text-white">7. Seguridad de los Datos</h2>
             <p className="text-zinc-300">
               Implementamos medidas de seguridad técnicas y organizativas para proteger tu
               información, incluyendo:
@@ -121,7 +197,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mt-8">
-            <h2 className="text-xl font-semibold text-white">7. Tus Derechos</h2>
+            <h2 className="text-xl font-semibold text-white">8. Tus Derechos</h2>
             <p className="text-zinc-300">Tienes derecho a:</p>
             <ul className="list-disc pl-6 text-zinc-300">
               <li>
@@ -152,7 +228,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mt-8">
-            <h2 className="text-xl font-semibold text-white">8. Retención de Datos</h2>
+            <h2 className="text-xl font-semibold text-white">9. Retención de Datos</h2>
             <p className="text-zinc-300">
               Conservamos tu información mientras mantengas una cuenta activa. Si eliminas tu
               cuenta, borraremos tus datos personales en un plazo de 30 días, excepto cuando sea
@@ -161,7 +237,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mt-8">
-            <h2 className="text-xl font-semibold text-white">9. Cookies</h2>
+            <h2 className="text-xl font-semibold text-white">10. Cookies</h2>
             <p className="text-zinc-300">
               Utilizamos cookies y tecnologías similares para mejorar tu experiencia. Para más
               información, consulta nuestra{' '}
@@ -173,7 +249,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mt-8">
-            <h2 className="text-xl font-semibold text-white">10. Cambios a esta Política</h2>
+            <h2 className="text-xl font-semibold text-white">11. Cambios a esta Política</h2>
             <p className="text-zinc-300">
               Podemos actualizar esta política ocasionalmente. Te notificaremos sobre cambios
               significativos mediante un aviso en la plataforma o por correo electrónico.
@@ -181,7 +257,7 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mt-8">
-            <h2 className="text-xl font-semibold text-white">11. Contacto</h2>
+            <h2 className="text-xl font-semibold text-white">12. Contacto</h2>
             <p className="text-zinc-300">
               Si tienes preguntas sobre esta política de privacidad, puedes contactarnos en:
             </p>
