@@ -307,7 +307,7 @@ export default function Home() {
             </p>
 
             {/* Links */}
-            <div className="flex items-center gap-6 text-sm text-zinc-500">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-zinc-500">
               <a
                 href="https://github.com/listerineh/open-stage"
                 target="_blank"
@@ -318,6 +318,18 @@ export default function Home() {
               </a>
               <span className="text-zinc-700">•</span>
               <span>MIT License</span>
+              <span className="text-zinc-700">•</span>
+              <Link href="/privacy" className="transition-colors hover:text-zinc-300">
+                Privacidad
+              </Link>
+              <span className="text-zinc-700">•</span>
+              <Link href="/terms" className="transition-colors hover:text-zinc-300">
+                Términos
+              </Link>
+              <span className="text-zinc-700">•</span>
+              <Link href="/cookies" className="transition-colors hover:text-zinc-300">
+                Cookies
+              </Link>
             </div>
 
             {/* Copyright */}
